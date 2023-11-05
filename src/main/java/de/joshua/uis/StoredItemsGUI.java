@@ -1,7 +1,6 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.SellItemDataBase;
 import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.StoredItemDataBase;
 import de.joshua.util.item.ItemBuilder;
@@ -9,7 +8,6 @@ import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -65,13 +63,13 @@ public class StoredItemsGUI extends PageGUI {
 
         int id = Objects.requireNonNull(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("id"), PersistentDataType.INTEGER));
         StoredItemDataBase sIDB = db_items.stream().filter(item -> item.dbID() == id).findFirst().orElse(null);
-        if(sIDB == null) return;
+        if (sIDB == null) return;
 
         clickedItem.setItemMeta(sIDB.item().getItemMeta());
 
-        if(isInventoryFull(player.getInventory())){
+        if (isInventoryFull(player.getInventory())) {
             player.getWorld().dropItem(player.getLocation(), sIDB.item());
-        }else {
+        } else {
             player.getInventory().addItem(sIDB.item());
         }
 
@@ -90,10 +88,10 @@ public class StoredItemsGUI extends PageGUI {
         db_items = ShopDataBaseUtil.getStoredItems(shopPlugin.getDatabaseConnection(), super.player.getUniqueId());
     }
 
-    private boolean isInventoryFull(PlayerInventory inventory){
+    private boolean isInventoryFull(PlayerInventory inventory) {
         boolean hasSpace = false;
         for (ItemStack item : inventory.getStorageContents()) {
-            if(item == null) {
+            if (item == null) {
                 hasSpace = true;
                 break;
             }

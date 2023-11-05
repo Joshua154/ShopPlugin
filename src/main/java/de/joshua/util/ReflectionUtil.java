@@ -8,7 +8,8 @@ import java.lang.reflect.Field;
 public final class ReflectionUtil {
 
     // Not instantiable
-    private ReflectionUtil() {}
+    private ReflectionUtil() {
+    }
 
 
     /**
@@ -31,12 +32,11 @@ public final class ReflectionUtil {
      * }}
      * </pre>
      *
-     * @param clazz The class of the object
+     * @param clazz     The class of the object
      * @param fieldName The name of the field
-     * @param object The object that this field belongs to, null if this is a static value
-     * @param <T> The type of the class, resp. value
+     * @param object    The object that this field belongs to, null if this is a static value
+     * @param <T>       The type of the class, resp. value
      * @return The value of the field, or null if the field wasn't found, or a security exception occurred.
-     *
      * @see #getField(Object, String) simplified method, if the object belongs to the class
      */
     @SuppressWarnings("unchecked")
@@ -58,9 +58,10 @@ public final class ReflectionUtil {
 
     /**
      * Convenience-method to access a member of a certain object
-     * @param object The object that this member belongs to
+     *
+     * @param object    The object that this member belongs to
      * @param fieldName The name of the field
-     * @param <T> The type of the object
+     * @param <T>       The type of the object
      * @return The value of the field, or null if the field wasn't found, or a security exception occurred.
      */
 

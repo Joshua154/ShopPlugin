@@ -4,13 +4,9 @@ import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.TimeZone;
 import java.util.UUID;
 
 public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID seller, LocalDateTime created_at) {

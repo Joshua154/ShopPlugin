@@ -36,7 +36,7 @@ public class ShopDataBaseUtil {
 
         List<SellItemDataBase> sellItemDataBases = new java.util.ArrayList<>();
         while (true) {
-            try{
+            try {
                 if (resultSet == null) break;
                 if (!resultSet.next()) {
                     statement.close();
@@ -65,7 +65,7 @@ public class ShopDataBaseUtil {
         }
         try {
             statement.close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return sellItemDataBases;
@@ -79,7 +79,7 @@ public class ShopDataBaseUtil {
 
         List<StoredItemDataBase> sellItemDataBases = new java.util.ArrayList<>();
         while (true) {
-            try{
+            try {
                 if (resultSet == null) break;
                 if (!resultSet.next()) {
                     statement.close();
@@ -103,7 +103,7 @@ public class ShopDataBaseUtil {
         }
         try {
             statement.close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return sellItemDataBases;
@@ -113,7 +113,7 @@ public class ShopDataBaseUtil {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), TimeZone.getDefault().toZoneId());
     }
 
-    private static byte[] fromString(String input){
+    private static byte[] fromString(String input) {
         String[] split = input.replace("[", "").replace("]", "").split(", ");
         byte[] output = new byte[split.length];
         for (int i = 0; i < split.length; i++) {
@@ -139,14 +139,14 @@ public class ShopDataBaseUtil {
         DataBaseUtil.executeQuery(connection, query);
     }
 
-    public static boolean isStillAvailable(Connection connection, int id){
+    public static boolean isStillAvailable(Connection connection, int id) {
         String query = DataBaseUtil.getSelectWhereQuery("sell_items", "id=" + id, "bought");
         Pair<ResultSet, PreparedStatement> temp = DataBaseUtil.executeQuery(connection, query);
         ResultSet resultSet = temp.getLeft();
         PreparedStatement statement = temp.getRight();
 
         while (true) {
-            try{
+            try {
                 if (resultSet == null) break;
                 if (!resultSet.next()) {
                     statement.close();
@@ -160,7 +160,7 @@ public class ShopDataBaseUtil {
         }
         try {
             statement.close();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;

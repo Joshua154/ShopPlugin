@@ -9,18 +9,16 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 public class BuyGUI implements IGUI {
     ShopPlugin shopPlugin;
@@ -60,7 +58,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void makePurchase() {
-        if(!item.isStillAvailable(shopPlugin.getDatabaseConnection())){
+        if (!item.isStillAvailable(shopPlugin.getDatabaseConnection())) {
             player.sendMessage("This item is no longer available");
             player.closeInventory();
             return;
@@ -71,7 +69,7 @@ public class BuyGUI implements IGUI {
             ItemStack editedItemStack = itemStack.clone();
             ItemStack editedPriceItemStack = item.price();
 
-            if(isShulkerBox(editedPriceItemStack) && isShulkerBox(editedItemStack)){
+            if (isShulkerBox(editedPriceItemStack) && isShulkerBox(editedItemStack)) {
                 editedPriceItemStack.setType(editedItemStack.getType());
             }
             if (editedItemStack.isSimilar(editedPriceItemStack)) {
@@ -84,17 +82,16 @@ public class BuyGUI implements IGUI {
         if (hasBought) {
             player.sendMessage(Component.text("Item bought"));
 
-            if(isInventoryFull(player.getInventory())){
+            if (isInventoryFull(player.getInventory())) {
                 player.getWorld().dropItem(player.getLocation(), item.item());
-            }else {
+            } else {
                 player.getInventory().addItem(item.item());
             }
 
             player.closeInventory();
             //ShopDataBaseUtil.buyItem(shopPlugin.getDatabaseConnection(), item, player); //TODO add this
             return;
-        }
-        else {
+        } else {
             player.sendMessage(Component.text("You can't afford this item"));
         }
 
@@ -105,7 +102,7 @@ public class BuyGUI implements IGUI {
 
     }
 
-    private boolean isShulkerBox(ItemStack itemStack){
+    private boolean isShulkerBox(ItemStack itemStack) {
         List<Material> shulkerBoxes = List.of(Material.SHULKER_BOX, Material.BLACK_SHULKER_BOX,
                 Material.BLUE_SHULKER_BOX, Material.BROWN_SHULKER_BOX, Material.CYAN_SHULKER_BOX,
                 Material.GRAY_SHULKER_BOX, Material.GREEN_SHULKER_BOX, Material.LIGHT_BLUE_SHULKER_BOX,
@@ -114,8 +111,9 @@ public class BuyGUI implements IGUI {
                 Material.RED_SHULKER_BOX, Material.WHITE_SHULKER_BOX, Material.YELLOW_SHULKER_BOX);
         return shulkerBoxes.contains(itemStack.getType());
     }
+
     private void handleRemove() {
-        if(!item.isStillAvailable(shopPlugin.getDatabaseConnection())){
+        if (!item.isStillAvailable(shopPlugin.getDatabaseConnection())) {
             player.sendMessage("This item is already sold");
             player.closeInventory();
             return;
@@ -124,9 +122,9 @@ public class BuyGUI implements IGUI {
         player.sendMessage(Component.text("Item Removed"));
 
         ShopDataBaseUtil.removeItem(shopPlugin.getDatabaseConnection(), item);
-        if(isInventoryFull(player.getInventory())){
+        if (isInventoryFull(player.getInventory())) {
             player.getWorld().dropItem(player.getLocation(), item.item());
-        }else {
+        } else {
             player.getInventory().addItem(item.item());
         }
 
@@ -201,10 +199,10 @@ public class BuyGUI implements IGUI {
         return inventory;
     }
 
-    private boolean isInventoryFull(PlayerInventory inventory){
+    private boolean isInventoryFull(PlayerInventory inventory) {
         boolean hasSpace = false;
         for (ItemStack item : inventory.getStorageContents()) {
-            if(item == null) {
+            if (item == null) {
                 hasSpace = true;
                 break;
             }

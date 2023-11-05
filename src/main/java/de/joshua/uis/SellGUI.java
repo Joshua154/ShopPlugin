@@ -19,11 +19,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class SellGUI implements IGUI {
+    private final Map<Integer, SellItemType> itemMap = new HashMap<>();
+    private final Map<SellItemType, ItemStack> collectedItems = new HashMap<>();
     ShopPlugin shopPlugin;
     private Player player;
     private Inventory inventory;
-    private final Map<Integer, SellItemType> itemMap = new HashMap<>();
-    private final Map<SellItemType, ItemStack> collectedItems = new HashMap<>();
 
     public SellGUI(ShopPlugin shopPlugin, Player player) {
         this.shopPlugin = shopPlugin;
@@ -64,8 +64,7 @@ public class SellGUI implements IGUI {
                 }
                 player.closeInventory();
             }
-        }
-        else event.setCancelled(false);
+        } else event.setCancelled(false);
     }
 
     @Override
@@ -125,12 +124,12 @@ public class SellGUI implements IGUI {
     private void acceptItems() {
         ItemStack sellItem = collectedItems.get(SellItemType.SELL_ITEM);
         ItemStack sellPrice = collectedItems.get(SellItemType.SET_PRICE);
-        if(sellItem == null) {
+        if (sellItem == null) {
             giveItemsBack();
             player.sendMessage(Component.text("Error: No item to sell!"));
             return;
         }
-        if(sellPrice == null) {
+        if (sellPrice == null) {
             giveItemsBack();
             player.sendMessage(Component.text("Error: No item for Price!"));
             return;
@@ -145,7 +144,7 @@ public class SellGUI implements IGUI {
     }
 
     private void giveItemsBack() {
-        if(collectedItems.isEmpty()) return;
+        if (collectedItems.isEmpty()) return;
         List<SellItemType> toRemove = new ArrayList<>();
 
         for (Map.Entry<SellItemType, ItemStack> entry : collectedItems.entrySet()) {

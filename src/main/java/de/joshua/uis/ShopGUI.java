@@ -5,9 +5,7 @@ import de.joshua.util.SellItemDataBase;
 import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
-import jdk.jfr.Category;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -16,7 +14,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ShopGUI extends PageGUI {

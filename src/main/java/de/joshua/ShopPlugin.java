@@ -14,6 +14,7 @@ import java.util.Objects;
 
 public final class ShopPlugin extends JavaPlugin {
     private Connection databaseConnection;
+
     @Override
     public void onEnable() {
         establishDatabaseConnection();
@@ -37,7 +38,7 @@ public final class ShopPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("stored")).setExecutor(new StoredCommand(this));
     }
 
-    private void establishDatabaseConnection(){
+    private void establishDatabaseConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
             this.databaseConnection = DriverManager.getConnection("jdbc:sqlite:plugins\\" + getDataFolder().getName() + "\\database.db");

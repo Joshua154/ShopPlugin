@@ -1,17 +1,12 @@
 package de.joshua.util;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.Bukkit;
-import org.slf4j.helpers.FormattingTuple;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class DataBaseUtil {
     public static String getCreateTableQuery(String tableName, String... columns) {
@@ -73,14 +68,13 @@ public class DataBaseUtil {
         return "DELETE FROM " + tableName + " WHERE " + where + ";";
     }
 
-    public static Pair<ResultSet, PreparedStatement> executeQuery(Connection connection, String query){
+    public static Pair<ResultSet, PreparedStatement> executeQuery(Connection connection, String query) {
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            if(query.toLowerCase().startsWith("select")) {
+            if (query.toLowerCase().startsWith("select")) {
                 ResultSet rs = statement.executeQuery();
                 return Pair.of(rs, statement);
-            }
-            else {
+            } else {
                 statement.executeUpdate();
                 statement.close();
             }

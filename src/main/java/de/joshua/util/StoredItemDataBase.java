@@ -15,6 +15,7 @@ public record StoredItemDataBase(int dbID, ItemStack item, UUID seller, UUID buy
                         Component.text("Created at: " + bought_at()))
                 .build();
     }
+
     @Override
     public ItemStack item() {
         return item.clone();
