@@ -1,0 +1,16 @@
+name: ShopPlugin
+version: '${version}'
+main: de.joshua.ShopPlugin
+api-version: '1.20'
+authors: [Joshua154]
+
+commands:
+  sell:
+    description: sell Command
+    permission: shopplugin.sell
+  shop:
+    description: shop Command
+    permission: shopplugin.shop
+  stored:
+    description: stored Command
+    permission: shopplugin.stored
