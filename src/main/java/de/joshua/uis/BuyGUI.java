@@ -22,8 +22,8 @@ import java.util.Objects;
 
 public class BuyGUI implements IGUI {
     ShopPlugin shopPlugin;
-    private Player player;
-    private SellItemDataBase item;
+    private final Player player;
+    private final SellItemDataBase item;
     private Inventory inventory;
 
     public BuyGUI(ShopPlugin shopPlugin, SellItemDataBase item, Player player) {
@@ -58,7 +58,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void makePurchase() {
-        if (!item.isStillAvailable(shopPlugin.getDatabaseConnection())) {
+        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
             player.sendMessage("This item is no longer available");
             player.closeInventory();
             return;
@@ -113,7 +113,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void handleRemove() {
-        if (!item.isStillAvailable(shopPlugin.getDatabaseConnection())) {
+        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
             player.sendMessage("This item is already sold");
             player.closeInventory();
             return;

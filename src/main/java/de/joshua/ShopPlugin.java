@@ -22,10 +22,6 @@ public final class ShopPlugin extends JavaPlugin {
         registerCommands();
     }
 
-    @Override
-    public void onDisable() {
-    }
-
     private void registerEvents() {
         PluginManager pluginManager = getServer().getPluginManager();
 

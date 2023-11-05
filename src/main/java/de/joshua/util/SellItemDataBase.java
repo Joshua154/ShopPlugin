@@ -38,7 +38,7 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
         return created_at;
     }
 
-    public boolean isStillAvailable(Connection connection) {
-        return ShopDataBaseUtil.isStillAvailable(connection, dbID);
+    public boolean isNotAvailable(Connection connection) {
+        return !ShopDataBaseUtil.isStillAvailable(connection, dbID);
     }
 }

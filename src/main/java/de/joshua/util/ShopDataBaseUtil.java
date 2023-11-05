@@ -1,6 +1,7 @@
 package de.joshua.util;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,6 +13,7 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.logging.Level;
 
 public class ShopDataBaseUtil {
     public static void addNewSellItem(Connection connection, ItemStack itemStack, ItemStack price, String seller_uuid) {
@@ -60,13 +62,13 @@ public class ShopDataBaseUtil {
 
                 sellItemDataBases.add(sellItemDataBase);
             } catch (SQLException e) {
-                e.printStackTrace();
+                Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
             }
         }
         try {
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
         }
         return sellItemDataBases;
     }
@@ -98,13 +100,13 @@ public class ShopDataBaseUtil {
 
                 sellItemDataBases.add(storedItemDataBase);
             } catch (SQLException e) {
-                e.printStackTrace();
+                Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
             }
         }
         try {
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
         }
         return sellItemDataBases;
     }
@@ -155,13 +157,13 @@ public class ShopDataBaseUtil {
                 if (resultSet.getString("bought") == null) return false;
                 return resultSet.getString("bought").equals("0");
             } catch (SQLException e) {
-                e.printStackTrace();
+                Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
             }
         }
         try {
             statement.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
         }
         return false;
     }

@@ -3,7 +3,6 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.2.0"
 }
 
-group = 'de'
 version = '1.0'
 
 repositories {

@@ -29,7 +29,7 @@ public class ShopGUI extends PageGUI {
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = super.getInventory();
-
+        //TODO: Add categories
         return inventory;
     }
 
