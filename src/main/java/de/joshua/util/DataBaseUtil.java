@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class DataBaseUtil {
     public static String getCreateTableQuery(String tableName, String... columns) {
         StringBuilder query = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " (");

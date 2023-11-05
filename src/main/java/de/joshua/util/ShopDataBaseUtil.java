@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.logging.Level;
 
+@SuppressWarnings("unused")
 public class ShopDataBaseUtil {
     public static void addNewSellItem(Connection connection, ItemStack itemStack, ItemStack price, String seller_uuid) {
         Map<String, Object> values = new java.util.HashMap<>(Map.of(
