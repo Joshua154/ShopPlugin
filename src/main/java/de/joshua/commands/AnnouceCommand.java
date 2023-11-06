@@ -1,8 +1,6 @@
 package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
-import de.joshua.uis.BuyGUI;
-import de.joshua.util.ShopDataBaseUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;

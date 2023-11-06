@@ -44,7 +44,7 @@ public class ShopDataBaseUtil {
             try {
                 if (resultSet == null) break;
                 if (!resultSet.next()) {
-                    if(statement != null)
+                    if (statement != null)
                         statement.close();
                     break;
                 }
@@ -56,7 +56,7 @@ public class ShopDataBaseUtil {
             }
         }
         try {
-            if(statement != null)
+            if (statement != null)
                 statement.close();
         } catch (SQLException e) {
             Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
@@ -224,7 +224,7 @@ public class ShopDataBaseUtil {
         return sellItemDataBase;
     }
 
-    private static SellItemDataBase parseItem(ResultSet resultSet){
+    private static SellItemDataBase parseItem(ResultSet resultSet) {
         SellItemDataBase returnItem = null;
         try {
             if (resultSet.getString("item") == null) return null;
@@ -243,7 +243,7 @@ public class ShopDataBaseUtil {
                     parseDateTime(created_at)
             );
         } catch (SQLException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Error while parsing Item: " + Arrays.toString(e.getStackTrace()));
         }
         return returnItem;
     }
@@ -282,7 +282,7 @@ public class ShopDataBaseUtil {
         return getOffersWithQuery(connection, query);
     }
 
-    private static List<OfferItemDataBase> getOffersWithQuery(Connection connection, String query){
+    private static List<OfferItemDataBase> getOffersWithQuery(Connection connection, String query) {
         Pair<ResultSet, PreparedStatement> temp = DataBaseUtil.executeQuery(connection, query);
         ResultSet resultSet = temp.getLeft();
         PreparedStatement statement = temp.getRight();
@@ -303,13 +303,13 @@ public class ShopDataBaseUtil {
                 int id = resultSet.getInt("id");
                 int buyItemID = resultSet.getInt("buyItemID");
                 SellItemDataBase sellItem = null;
-                if(cachedItems.isEmpty() || cachedItems.stream().noneMatch(sellItemDataBase -> sellItemDataBase.dbID() == id)) {
+                if (cachedItems.isEmpty() || cachedItems.stream().noneMatch(sellItemDataBase -> sellItemDataBase.dbID() == id)) {
                     Optional<SellItemDataBase> sellItemDataBase = getSpecificSellItem(connection, buyItemID);
                     if (sellItemDataBase.isPresent()) {
                         sellItem = sellItemDataBase.get();
                         cachedItems.add(sellItemDataBase.get());
                     }
-                }else {
+                } else {
                     sellItem = cachedItems.stream().filter(sellItemDataBase -> sellItemDataBase.dbID() == id).findFirst().orElse(null);
                 }
                 if (sellItem == null) continue;

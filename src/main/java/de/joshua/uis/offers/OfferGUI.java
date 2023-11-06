@@ -1,9 +1,9 @@
 package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.dbItems.OfferItemDataBase;
 import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.dbItems.OfferItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
 import net.kyori.adventure.text.Component;
@@ -20,10 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class OfferGUI implements IGUI {
-    ShopPlugin shopPlugin;
     private final Player player;
     private final OfferItemDataBase offer;
-    private Inventory inventory;
+    ShopPlugin shopPlugin;
 
     public OfferGUI(ShopPlugin shopPlugin, OfferItemDataBase offer, Player player) {
         this.shopPlugin = shopPlugin;
@@ -79,8 +78,8 @@ public class OfferGUI implements IGUI {
 
     @Override
     public void open(Player player) {
-        this.inventory = getInventory();
-        player.openInventory(this.inventory);
+        Inventory inventory = getInventory();
+        player.openInventory(inventory);
     }
 
     public void open() {

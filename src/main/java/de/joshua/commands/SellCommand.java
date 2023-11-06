@@ -2,7 +2,6 @@ package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.SellGUI;
-import de.joshua.uis.offers.SeeOfferedItemsGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

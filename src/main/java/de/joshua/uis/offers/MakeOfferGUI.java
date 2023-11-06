@@ -1,9 +1,9 @@
 package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
 import net.kyori.adventure.text.Component;
@@ -20,11 +20,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class MakeOfferGUI implements IGUI {
-    ShopPlugin shopPlugin;
     private final Player player;
     private final SellItemDataBase item;
-    private Inventory inventory;
     private final Integer priceSlot = 18 + 2;
+    ShopPlugin shopPlugin;
+    private Inventory inventory;
 
     public MakeOfferGUI(ShopPlugin shopPlugin, SellItemDataBase item, Player player) {
         this.shopPlugin = shopPlugin;
@@ -40,7 +40,7 @@ public class MakeOfferGUI implements IGUI {
     public void onClick(InventoryClickEvent event) {
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null) return;
-        if (!clickedItem.hasItemMeta())  {
+        if (!clickedItem.hasItemMeta()) {
             event.setCancelled(false);
             return;
         }
@@ -87,7 +87,7 @@ public class MakeOfferGUI implements IGUI {
 
     @Override
     public void onClose(Player player, Inventory inventory) {
-        if (inventory.getItem(priceSlot) != null && inventory.getItem(priceSlot).getType() != Material.AIR) {
+        if (inventory.getItem(priceSlot) != null && Objects.requireNonNull(inventory.getItem(priceSlot)).getType() != Material.AIR) {
             ShopUtil.addItemToInventory(player, inventory.getItem(priceSlot));
         }
     }

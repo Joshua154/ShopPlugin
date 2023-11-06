@@ -21,8 +21,8 @@ import java.util.*;
 public class SellGUI implements IGUI {
     private final Map<Integer, SellItemType> itemMap = new HashMap<>();
     private final Map<SellItemType, ItemStack> collectedItems = new HashMap<>();
-    ShopPlugin shopPlugin;
     private final Player player;
+    ShopPlugin shopPlugin;
     private Inventory inventory;
 
     public SellGUI(ShopPlugin shopPlugin, Player player) {

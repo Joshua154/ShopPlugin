@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -80,8 +81,7 @@ public class DataBaseUtil {
                 statement.close();
             }
         } catch (Exception e) {
-            Bukkit.getLogger().warning("Error while executing query: " + query);
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.toString(e.getStackTrace()));
         }
         return Pair.of(null, null);
     }

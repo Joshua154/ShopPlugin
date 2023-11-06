@@ -5,7 +5,6 @@ import de.joshua.util.DataBaseUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +15,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class RunSQLCommand implements CommandExecutor {
@@ -65,7 +63,7 @@ public class RunSQLCommand implements CommandExecutor {
                     ShopPlugin.sendMessage(Component.text("WARN: " + e.getCause()), player);
                 }
             }
-            if(preparedStatement != null)
+            if (preparedStatement != null)
                 preparedStatement.close();
             else
                 rows.add("SUCCESS");

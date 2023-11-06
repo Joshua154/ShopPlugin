@@ -8,7 +8,8 @@ import org.bukkit.inventory.ItemStack;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record StoredItemDataBase(int dbID, ItemStack item, UUID seller, UUID buyer, LocalDateTime bought_at, int soldItemID) {
+public record StoredItemDataBase(int dbID, ItemStack item, UUID seller, UUID buyer, LocalDateTime bought_at,
+                                 int soldItemID) {
     public ItemStack getPreviewItem() {
         return new ItemBuilder(item())
                 .lore(Component.text("Buyer: " + Bukkit.getServer().getOfflinePlayer(buyer()).getName()),

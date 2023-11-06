@@ -2,18 +2,13 @@ package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.BuyGUI;
-import de.joshua.uis.SellGUI;
 import de.joshua.util.ShopDataBaseUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class OppenBuyCommand implements CommandExecutor {
     ShopPlugin shopPlugin;
