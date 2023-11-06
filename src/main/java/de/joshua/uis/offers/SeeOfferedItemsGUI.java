@@ -1,13 +1,11 @@
-package de.joshua.uis;
+package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
 import de.joshua.util.ShopDataBaseUtil;
-import de.joshua.util.ShopUtil;
-import de.joshua.util.dbItems.StoredItemDataBase;
+import de.joshua.util.dbItems.OfferItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -17,12 +15,12 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 import java.util.Objects;
 
-public class StoredItemsGUI extends PageGUI {
+public class SeeOfferedItemsGUI extends PageGUI {
     ShopPlugin shopPlugin;
-    List<StoredItemDataBase> db_items;
+    List<OfferItemDataBase> db_items;
 
-    public StoredItemsGUI(ShopPlugin shopPlugin, Player player) {
-        super(Component.text("Stored Items"));
+    public SeeOfferedItemsGUI(ShopPlugin shopPlugin, Player player) {
+        super(Component.text("Offers"));
         super.player = player;
         this.shopPlugin = shopPlugin;
         updateItems();
@@ -43,10 +41,10 @@ public class StoredItemsGUI extends PageGUI {
         return db_items.stream().map(this::generateItem).toList();
     }
 
-    private ItemStack generateItem(StoredItemDataBase storedItemDataBase) {
-        return new ItemBuilder(storedItemDataBase.getPreviewItem())
-                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_item")
-                .persistentData(getPageGUIKey("id"), PersistentDataType.INTEGER, storedItemDataBase.dbID())
+    private ItemStack generateItem(OfferItemDataBase offerItemDataBase) {
+        return new ItemBuilder(offerItemDataBase.getPreviewItem())
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "offered_item")
+                .persistentData(getPageGUIKey("id"), PersistentDataType.INTEGER, offerItemDataBase.dbID())
                 .build();
     }
 
@@ -58,21 +56,14 @@ public class StoredItemsGUI extends PageGUI {
         if (!clickedItem.hasItemMeta()) return;
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(getPageGUIKey("type"), PersistentDataType.STRING))
             return;
-        if (!Objects.equals(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING), "stored_item"))
+        if (!Objects.equals(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING), "offered_item"))
             return;
 
         int id = Objects.requireNonNull(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("id"), PersistentDataType.INTEGER));
-        StoredItemDataBase sIDB = db_items.stream().filter(item -> item.dbID() == id).findFirst().orElse(null);
-        if (sIDB == null) return;
+        OfferItemDataBase offeredItem = db_items.stream().filter(item -> item.dbID() == id).findFirst().orElse(null);
+        if (offeredItem == null) return;
 
-        clickedItem.setItemMeta(sIDB.item().getItemMeta());
-
-        ShopUtil.addItemToInventory(player, sIDB.item());
-
-        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.removeStoredItem(shopPlugin.getDatabaseConnection(), sIDB.dbID()));
-
-        db_items.remove(sIDB);
-        refresh();
+        new OfferGUI(shopPlugin, offeredItem, player).open();
     }
 
     @Override
@@ -81,7 +72,7 @@ public class StoredItemsGUI extends PageGUI {
     }
 
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getStoredItems(shopPlugin.getDatabaseConnection(), super.player.getUniqueId());
+        db_items = ShopDataBaseUtil.getOfferedItems(shopPlugin.getDatabaseConnection(), this.player.getUniqueId());
     }
 }
 

@@ -1,7 +1,7 @@
 package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
-import de.joshua.uis.ShopGUI;
+import de.joshua.uis.offers.SeeOfferedItemsGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,10 +9,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ShopCommand implements CommandExecutor {
+public class SeeOffersCommand implements CommandExecutor {
     ShopPlugin shopPlugin;
 
-    public ShopCommand(ShopPlugin shopPlugin) {
+    public SeeOffersCommand(ShopPlugin shopPlugin) {
         this.shopPlugin = shopPlugin;
     }
 
@@ -24,8 +24,8 @@ public class ShopCommand implements CommandExecutor {
             return false;
         }
 
-        ShopGUI shopGUI = new ShopGUI(shopPlugin);
-        shopGUI.open(player);
+        SeeOfferedItemsGUI offeredItemsGUI = new SeeOfferedItemsGUI(shopPlugin, player);
+        offeredItemsGUI.open();
 
         return true;
     }

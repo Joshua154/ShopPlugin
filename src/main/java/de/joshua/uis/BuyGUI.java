@@ -1,8 +1,10 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.SellItemDataBase;
+import de.joshua.uis.offers.MakeOfferGUI;
+import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.ShopUtil;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
 import net.kyori.adventure.text.Component;
@@ -13,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +60,7 @@ public class BuyGUI implements IGUI {
 
     private void makePurchase() {
         if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
-            player.sendMessage("This item is no longer available");
+            ShopPlugin.sendMessage(Component.text("This item is no longer available"), player);
             player.closeInventory();
             return;
         }
@@ -80,26 +81,22 @@ public class BuyGUI implements IGUI {
             }
         }
         if (hasBought) {
-            player.sendMessage(Component.text("Item bought"));
+            ShopPlugin.sendMessage(Component.text("Item bought"), player);
 
-            if (isInventoryFull(player.getInventory())) {
-                player.getWorld().dropItem(player.getLocation(), item.item());
-            } else {
-                player.getInventory().addItem(item.item());
-            }
+            ShopUtil.addItemToInventory(player, item.item());
 
             player.closeInventory();
-            //ShopDataBaseUtil.buyItem(shopPlugin.getDatabaseConnection(), item, player); //TODO add this
+            ShopDataBaseUtil.buyItem(shopPlugin.getDatabaseConnection(), item, player);
             return;
         } else {
-            player.sendMessage(Component.text("You can't afford this item"));
+            ShopPlugin.sendMessage(Component.text("You can't afford this item"), player);
         }
 
         player.closeInventory();
     }
 
     private void handlePriceOffer() {
-
+        new MakeOfferGUI(shopPlugin, item, player).open();
     }
 
     private boolean isShulkerBox(ItemStack itemStack) {
@@ -114,19 +111,15 @@ public class BuyGUI implements IGUI {
 
     private void handleRemove() {
         if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
-            player.sendMessage("This item is already sold");
+            ShopPlugin.sendMessage(Component.text("This item is already sold"), player);
             player.closeInventory();
             return;
         }
 
-        player.sendMessage(Component.text("Item Removed"));
+        ShopPlugin.sendMessage(Component.text("Item Removed"), player);
 
         ShopDataBaseUtil.removeItem(shopPlugin.getDatabaseConnection(), item);
-        if (isInventoryFull(player.getInventory())) {
-            player.getWorld().dropItem(player.getLocation(), item.item());
-        } else {
-            player.getInventory().addItem(item.item());
-        }
+        ShopUtil.addItemToInventory(player, item.item());
 
         player.closeInventory();
     }
@@ -148,7 +141,7 @@ public class BuyGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Sell"));
+        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Buy"));
 
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
@@ -197,16 +190,5 @@ public class BuyGUI implements IGUI {
         }
 
         return inventory;
-    }
-
-    private boolean isInventoryFull(PlayerInventory inventory) {
-        boolean hasSpace = false;
-        for (ItemStack item : inventory.getStorageContents()) {
-            if (item == null) {
-                hasSpace = true;
-                break;
-            }
-        }
-        return !hasSpace;
     }
 }

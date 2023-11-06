@@ -58,10 +58,10 @@ public class DataBaseUtil {
     public static String getUpdateQuery(String tableName, Map.Entry<String, Object> where, Map<String, Object> values) {
         StringBuilder query = new StringBuilder("UPDATE " + tableName + " SET ");
         for (String column : values.keySet()) {
-            query.append(column).append("=").append(values.get(column)).append(", ");
+            query.append(column).append("=").append("'").append(values.get(column)).append("'").append(", ");
         }
         query.delete(query.length() - 2, query.length());
-        query.append(" WHERE ").append(where.getValue()).append("=").append(where.getKey()).append(";");
+        query.append(" WHERE ").append(where.getKey()).append("=").append("'").append(where.getValue()).append("'").append(";");
         return query.toString();
     }
 

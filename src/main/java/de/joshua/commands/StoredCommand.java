@@ -2,6 +2,7 @@ package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.StoredItemsGUI;
+import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +20,7 @@ public class StoredCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
         if (!player.isOp()) {
-            player.sendMessage("You are not allowed to use this command");
+            ShopPlugin.sendMessage(Component.text("You are not allowed to use this command"), player);
             return false;
         }
 

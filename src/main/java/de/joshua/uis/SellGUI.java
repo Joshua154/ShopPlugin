@@ -52,12 +52,12 @@ public class SellGUI implements IGUI {
             if (Objects.requireNonNull(property).equals("button")) {
                 switch (Objects.requireNonNull(meta.getPersistentDataContainer().get(getGUIKey("type"), PersistentDataType.STRING))) {
                     case "confirm" -> {
-                        player.sendMessage("Confirm");
+                        ShopPlugin.sendMessage(Component.text("Confirm"), player);
                         parseItems();
                         acceptItems();
                     }
                     case "cancel" -> {
-                        player.sendMessage("Cancel");
+                        ShopPlugin.sendMessage(Component.text("Cancel"), player);
                         parseItems();
                         giveItemsBack();
                     }
@@ -126,12 +126,12 @@ public class SellGUI implements IGUI {
         ItemStack sellPrice = collectedItems.get(SellItemType.SET_PRICE);
         if (sellItem == null) {
             giveItemsBack();
-            player.sendMessage(Component.text("Error: No item to sell!"));
+            ShopPlugin.sendMessage(Component.text("Error: No item to sell!"), player);
             return;
         }
         if (sellPrice == null) {
             giveItemsBack();
-            player.sendMessage(Component.text("Error: No item for Price!"));
+            ShopPlugin.sendMessage(Component.text("Error: No item for Price!"), player);
             return;
         }
 

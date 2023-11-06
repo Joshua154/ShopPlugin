@@ -14,3 +14,15 @@ commands:
   stored:
     description: stored Command
     permission: shopplugin.stored
+  open:
+    description: open specific Item Command
+    permission: shopplugin.open
+  announce:
+    description: announce Item Command
+    permission: shopplugin.announce
+  offers:
+    description: see offers Command
+    permission: shopplugin.offers
+  executeSQL:
+    description: execute SQL Command
+    permission: shopplugin.executeSQL

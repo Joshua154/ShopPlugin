@@ -1,5 +1,6 @@
-package de.joshua.util;
+package de.joshua.util.dbItems;
 
+import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
