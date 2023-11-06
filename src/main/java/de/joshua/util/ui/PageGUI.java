@@ -1,6 +1,5 @@
 package de.joshua.util.ui;
 
-import de.joshua.util.item.HeadBuilder;
 import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
