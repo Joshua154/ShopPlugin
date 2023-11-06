@@ -77,16 +77,14 @@ public abstract class PageGUI implements IGUI {
                     .build());
         }
         if (getPage() != 0) {
-            inventory.setItem(5 * 9 + 1, new HeadBuilder()
+            inventory.setItem(5 * 9 + 1, new ItemBuilder(Material.ARROW)
                     .displayName(Component.text("Back"))
-                    //.skullOwner("5f133e91919db0acefdc272d67fd87b4be88dc44a958958824474e21e06d53e6")
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
                     .build());
         }
         if (getPage() + 1 < getPageCount()) {
-            inventory.setItem(5 * 9 + 7, new HeadBuilder()
+            inventory.setItem(5 * 9 + 7, new ItemBuilder(Material.ARROW)
                     .displayName(Component.text("Further"))
-                    //.skullOwner("e3fc52264d8ad9e654f415bef01a23947edbccccf649373289bea4d149541f70")
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "further")
                     .build());
         }

@@ -148,9 +148,9 @@ public class ShopDataBaseUtil {
     }
 
     public static void removeItem(Connection connection, SellItemDataBase item) {
+        removeAllOffers(connection, item.dbID());
         String query = DataBaseUtil.getDeleteQuery("storedItems", "id=" + item.dbID());
         DataBaseUtil.executeQuery(connection, query);
-        removeAllOffers(connection, item.dbID());
     }
 
     public static boolean isStillAvailable(Connection connection, int id) {

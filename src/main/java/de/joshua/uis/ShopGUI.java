@@ -1,11 +1,13 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
+import de.joshua.uis.offers.SeeOfferedItemsGUI;
 import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -29,7 +31,33 @@ public class ShopGUI extends PageGUI {
     @Override
     public @NotNull Inventory getInventory() {
         Inventory inventory = super.getInventory();
-        //TODO: Add categories
+
+//        inventory.setItem(9 * 5 + 2, new ItemBuilder(Material.RED_CONCRETE)
+//                .displayName(Component.text("Cancel"))
+//                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+//                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "")
+//                .build());
+        inventory.setItem(9 * 5 + 3, new ItemBuilder(Material.EMERALD)
+                .displayName(Component.text("Sell"))
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "sell")
+                .build());
+        inventory.setItem(9 * 5 + 4, new ItemBuilder(Material.BUNDLE)
+                .displayName(Component.text("Trade Offers"))
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "offers")
+                .build());
+        inventory.setItem(9 * 5 + 5, new ItemBuilder(Material.CHEST)
+                .displayName(Component.text("Stored Items"))
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
+                .build());
+//        inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.RED_CONCRETE)
+//                .displayName(Component.text("Cancel"))
+//                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+//                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "cancel")
+//                .build());
+
         return inventory;
     }
 
@@ -67,6 +95,18 @@ public class ShopGUI extends PageGUI {
             }
             case "category" -> {
 
+            }
+            case "sell" -> {
+                SellGUI sellGUI = new SellGUI(shopPlugin, player);
+                sellGUI.open();
+            }
+            case "offers" -> {
+                SeeOfferedItemsGUI seeOfferedItemsGUI = new SeeOfferedItemsGUI(shopPlugin, player);
+                seeOfferedItemsGUI.open();
+            }
+            case "stored_items" -> {
+                StoredItemsGUI storedItemsGUI = new StoredItemsGUI(shopPlugin, player);
+                storedItemsGUI.open();
             }
         }
     }
