@@ -22,7 +22,7 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
     private final ItemMeta meta;
 
     public ItemBuilder(Material material) {
-        this.itemStack = new ItemStack(material);
+        this.itemStack = new ItemStack(material == null ? Material.AIR : material);
         this.meta = itemStack.getItemMeta();
     }
 

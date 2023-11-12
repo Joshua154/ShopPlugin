@@ -10,6 +10,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -62,7 +63,7 @@ public class ShopGUI extends PageGUI {
     }
 
     @Override
-    public void onClose(Player player, Inventory inventory) {
+    public void onClose(InventoryCloseEvent event) {
 
     }
 

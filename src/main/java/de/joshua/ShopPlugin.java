@@ -43,13 +43,13 @@ public final class ShopPlugin extends JavaPlugin {
     }
 
     private void registerCommands() {
-        Objects.requireNonNull(getCommand("sell")).setExecutor(new SellCommand(this));
+//        Objects.requireNonNull(getCommand("sell")).setExecutor(new SellCommand(this));
         Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
-        Objects.requireNonNull(getCommand("stored")).setExecutor(new StoredCommand(this));
+//        Objects.requireNonNull(getCommand("stored")).setExecutor(new StoredCommand(this));
         Objects.requireNonNull(getCommand("open")).setExecutor(new OppenBuyCommand(this));
         Objects.requireNonNull(getCommand("announce")).setExecutor(new AnnouceCommand(this));
         Objects.requireNonNull(getCommand("executeSQL")).setExecutor(new RunSQLCommand(this));
-        Objects.requireNonNull(getCommand("offers")).setExecutor(new SeeOffersCommand(this));
+//        Objects.requireNonNull(getCommand("offers")).setExecutor(new SeeOffersCommand(this));
     }
 
     private void establishDatabaseConnection() {

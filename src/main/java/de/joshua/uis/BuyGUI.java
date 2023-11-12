@@ -13,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -51,10 +52,14 @@ public class BuyGUI implements IGUI {
             switch (Objects.requireNonNull(clickedItem.getItemMeta().getPersistentDataContainer().get(getGUIKey("type"), PersistentDataType.STRING))) {
                 case "confirm" -> makePurchase();
                 case "offer" -> handlePriceOffer();
-                case "cancel" -> player.closeInventory();
+                case "cancel" -> handleCancel();
                 case "remove" -> handleRemove();
             }
         }
+    }
+
+    private void handleCancel() {
+        new ShopGUI(shopPlugin).open(player);
     }
 
     private void makePurchase() {
@@ -134,7 +139,7 @@ public class BuyGUI implements IGUI {
     }
 
     @Override
-    public void onClose(Player player, Inventory inventory) {
+    public void onClose(InventoryCloseEvent event) {
 
     }
 
@@ -179,7 +184,6 @@ public class BuyGUI implements IGUI {
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "cancel")
                 .build());
-        System.out.println(this.player.getUniqueId() + " " + item.seller());
         if (this.player.getUniqueId().equals(item.seller())) {
             inventory.setItem(9 + 9 + 8, new ItemBuilder(Material.BARRIER)
                     .displayName(Component.text("Remove"))

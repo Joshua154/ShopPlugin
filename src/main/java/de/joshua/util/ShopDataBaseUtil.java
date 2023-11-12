@@ -136,7 +136,7 @@ public class ShopDataBaseUtil {
         ));
 
 
-        addStoredItem(connection, offer.sellItem().item(), offer.offeredBy(), offer.seller(), offer.dbID());
+        addStoredItem(connection, offer.sellItem().item(), offer.seller(), offer.offeredBy(), offer.dbID());
         removeOffer(connection, offer.dbID());
         setSellItemToBought(connection, offer.sellItem().dbID(), values);
         removeAllOffers(connection, offer.sellItem().dbID());

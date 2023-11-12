@@ -116,6 +116,10 @@ public abstract class PageGUI implements IGUI {
         this.player = player;
     }
 
+    public void open() {
+        this.open(player);
+    }
+
     public void refresh() {
         player.openInventory(getInventory());
     }

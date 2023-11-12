@@ -20,6 +20,6 @@ public class GUIEH implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         if (!(event.getInventory().getHolder() instanceof IGUI igui)) return;
-        igui.onClose((Player) event.getPlayer(), event.getInventory());
+        igui.onClose(event);
     }
 }

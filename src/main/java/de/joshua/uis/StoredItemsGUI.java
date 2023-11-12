@@ -8,11 +8,14 @@ import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +33,7 @@ public class StoredItemsGUI extends PageGUI {
 
 
     @Override
-    public void onClose(Player player, Inventory inventory) {
+    public void onClose(InventoryCloseEvent event) {
 
     }
 
@@ -58,6 +61,10 @@ public class StoredItemsGUI extends PageGUI {
         if (!clickedItem.hasItemMeta()) return;
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(getPageGUIKey("type"), PersistentDataType.STRING))
             return;
+        if (Objects.equals(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING), "go_back_gui")) {
+            handleBack();
+            return;
+        }
         if (!Objects.equals(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING), "stored_item"))
             return;
 
@@ -75,6 +82,10 @@ public class StoredItemsGUI extends PageGUI {
         refresh();
     }
 
+    private void handleBack() {
+        new ShopGUI(shopPlugin).open(player);
+    }
+
     @Override
     public void onPageSwitch() {
         updateItems();
@@ -82,6 +93,16 @@ public class StoredItemsGUI extends PageGUI {
 
     private void updateItems() {
         db_items = ShopDataBaseUtil.getStoredItems(shopPlugin.getDatabaseConnection(), super.player.getUniqueId());
+    }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        Inventory inventory = super.getInventory();
+        inventory.setItem(9 * 5 + 4, new ItemBuilder(Material.RED_CONCRETE)
+                .displayName(Component.text("Go Back"))
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "go_back_gui")
+                .build());
+        return inventory;
     }
 }
 

@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -86,7 +87,10 @@ public class MakeOfferGUI implements IGUI {
     }
 
     @Override
-    public void onClose(Player player, Inventory inventory) {
+    public void onClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        Inventory inventory = event.getInventory();
+
         if (inventory.getItem(priceSlot) != null && Objects.requireNonNull(inventory.getItem(priceSlot)).getType() != Material.AIR) {
             ShopUtil.addItemToInventory(player, inventory.getItem(priceSlot));
         }

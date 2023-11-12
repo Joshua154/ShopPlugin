@@ -1,7 +1,9 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
+import de.joshua.uis.sellection.ItemSelection;
 import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.ShopUtil;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
 import net.kyori.adventure.text.Component;
@@ -10,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -24,6 +27,8 @@ public class SellGUI implements IGUI {
     private final Player player;
     ShopPlugin shopPlugin;
     private Inventory inventory;
+    private int quantityOverwrite = 0;
+    private Material materialOverwrite = null;
 
     public SellGUI(ShopPlugin shopPlugin, Player player) {
         this.shopPlugin = shopPlugin;
@@ -52,17 +57,22 @@ public class SellGUI implements IGUI {
             if (Objects.requireNonNull(property).equals("button")) {
                 switch (Objects.requireNonNull(meta.getPersistentDataContainer().get(getGUIKey("type"), PersistentDataType.STRING))) {
                     case "confirm" -> {
-                        ShopPlugin.sendMessage(Component.text("Confirm"), player);
                         parseItems();
                         acceptItems();
+                        player.closeInventory();
                     }
                     case "cancel" -> {
-                        ShopPlugin.sendMessage(Component.text("Cancel"), player);
                         parseItems();
                         giveItemsBack();
+                        player.closeInventory();
+                    }
+                    case "select_price" -> {
+                        parseItems();
+                        inventory.setItem(9 + 2, new ItemStack(Material.AIR));
+                        inventory.setItem(9 + 9 + 2, new ItemStack(Material.AIR));
+                        new ItemSelection(shopPlugin, player, this).open();
                     }
                 }
-                player.closeInventory();
             }
         } else event.setCancelled(false);
     }
@@ -71,6 +81,7 @@ public class SellGUI implements IGUI {
     public void open(Player player) {
         this.inventory = getInventory();
         player.openInventory(this.inventory);
+        updatePreviewItem();
     }
 
     public void open() {
@@ -78,7 +89,7 @@ public class SellGUI implements IGUI {
     }
 
     @Override
-    public void onClose(Player player, Inventory inventory) {
+    public void onClose(InventoryCloseEvent event) {
         parseItems();
         giveItemsBack();
     }
@@ -99,12 +110,25 @@ public class SellGUI implements IGUI {
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 2, new ItemStack(Material.AIR));
+        if (collectedItems.get(SellItemType.SELL_ITEM) != null) {
+            inventory.setItem(9 + 2, collectedItems.get(SellItemType.SELL_ITEM));
+        }
 
         inventory.setItem(9 + 9 + 1, new ItemBuilder(Material.PAPER)
                 .displayName(Component.text("Custom Price"))
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 9 + 2, new ItemStack(Material.AIR));
+        if (collectedItems.get(SellItemType.SET_PRICE) != null) {
+            inventory.setItem(9 + 9 + 2, collectedItems.get(SellItemType.SET_PRICE));
+        }
+
+
+        inventory.setItem(9 + 9 + 3, new ItemBuilder(Material.CHEST)
+                .displayName(Component.text("Select Price"))
+                .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getGUIKey("type"), PersistentDataType.STRING, "select_price")
+                .build());
 
 
         inventory.setItem(9 + 9 + 5, new ItemBuilder(Material.LIME_CONCRETE)
@@ -136,7 +160,13 @@ public class SellGUI implements IGUI {
         }
 
         String playerUUID = player.getUniqueId().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.addNewSellItem(shopPlugin.getDatabaseConnection(), sellItem, sellPrice, playerUUID));
+
+        ItemStack priceItem = collectedItems.get(SellItemType.SET_PRICE);
+        ItemMeta meta = priceItem.getItemMeta();
+        meta.getPersistentDataContainer().remove(getGUIKey("sell_gui"));
+        priceItem.setItemMeta(meta);
+
+        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.addNewSellItem(shopPlugin.getDatabaseConnection(), priceItem, sellPrice, playerUUID));
 
         collectedItems.remove(SellItemType.SELL_ITEM);
 
@@ -150,7 +180,7 @@ public class SellGUI implements IGUI {
         for (Map.Entry<SellItemType, ItemStack> entry : collectedItems.entrySet()) {
             if (entry.getValue() == null) continue;
             if (!(new ItemBuilder(entry.getValue()).hasPersistentData(getGUIKey("sell_gui"), PersistentDataType.STRING))) {
-                player.getInventory().addItem(entry.getValue());
+                ShopUtil.addItemToInventory(player, entry.getValue());
             }
             toRemove.add(entry.getKey());
         }
@@ -169,5 +199,41 @@ public class SellGUI implements IGUI {
             tmp.put(entry.getValue(), item);
         }
         collectedItems.putAll(tmp);
+    }
+
+    public void setMaterial(Material material){
+        System.out.println("Material: " + material);
+        this.materialOverwrite = material;
+    }
+
+    public void setQuantity(Integer itemQuantity){
+        this.quantityOverwrite = itemQuantity;
+    }
+
+    public void updatePreviewItem(){
+        System.out.println(materialOverwrite);
+        System.out.println(quantityOverwrite);
+
+        boolean modifiedMaterial = false;
+
+        parseItems();
+        if(collectedItems.get(SellItemType.SET_PRICE) != null) {
+            ShopUtil.addItemToInventory(player, collectedItems.get(SellItemType.SET_PRICE));
+            if(materialOverwrite == null) {
+                materialOverwrite = Material.STONE;
+                modifiedMaterial = true;
+            }
+        }
+
+        if(materialOverwrite != null && quantityOverwrite != 0){
+            itemMap.entrySet().stream().filter(entry -> entry.getValue().equals(SellItemType.SET_PRICE)).findFirst().ifPresent(entry ->
+                    inventory.setItem(entry.getKey(), new ItemBuilder(materialOverwrite)
+                            .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "selected_item")
+                            .amount(quantityOverwrite)
+                            .build())
+            );
+        }
+
+        if (modifiedMaterial) materialOverwrite = null;
     }
 }
