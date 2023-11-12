@@ -1,6 +1,9 @@
 package de.joshua;
 
-import de.joshua.commands.*;
+import de.joshua.commands.AnnouceCommand;
+import de.joshua.commands.OppenBuyCommand;
+import de.joshua.commands.RunSQLCommand;
+import de.joshua.commands.ShopCommand;
 import de.joshua.util.ui.GUIEH;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

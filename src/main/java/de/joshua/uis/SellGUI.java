@@ -201,31 +201,31 @@ public class SellGUI implements IGUI {
         collectedItems.putAll(tmp);
     }
 
-    public void setMaterial(Material material){
+    public void setMaterial(Material material) {
         System.out.println("Material: " + material);
         this.materialOverwrite = material;
     }
 
-    public void setQuantity(Integer itemQuantity){
+    public void setQuantity(Integer itemQuantity) {
         this.quantityOverwrite = itemQuantity;
     }
 
-    public void updatePreviewItem(){
+    public void updatePreviewItem() {
         System.out.println(materialOverwrite);
         System.out.println(quantityOverwrite);
 
         boolean modifiedMaterial = false;
 
         parseItems();
-        if(collectedItems.get(SellItemType.SET_PRICE) != null) {
+        if (collectedItems.get(SellItemType.SET_PRICE) != null) {
             ShopUtil.addItemToInventory(player, collectedItems.get(SellItemType.SET_PRICE));
-            if(materialOverwrite == null) {
+            if (materialOverwrite == null) {
                 materialOverwrite = Material.STONE;
                 modifiedMaterial = true;
             }
         }
 
-        if(materialOverwrite != null && quantityOverwrite != 0){
+        if (materialOverwrite != null && quantityOverwrite != 0) {
             itemMap.entrySet().stream().filter(entry -> entry.getValue().equals(SellItemType.SET_PRICE)).findFirst().ifPresent(entry ->
                     inventory.setItem(entry.getKey(), new ItemBuilder(materialOverwrite)
                             .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "selected_item")

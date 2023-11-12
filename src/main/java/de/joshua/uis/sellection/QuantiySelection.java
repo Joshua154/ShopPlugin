@@ -3,23 +3,24 @@ package de.joshua.uis.sellection;
 import de.joshua.ShopPlugin;
 import de.joshua.uis.SellGUI;
 import de.joshua.util.item.ItemBuilder;
-import de.joshua.util.ui.IGUI;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class QuantiySelection extends PageGUI {
+    private final String title = "Select Quantity";
     ShopPlugin shopPlugin;
     SellGUI sellGUI;
-    private final String title = "Select Quantity";
+
     public QuantiySelection(ShopPlugin shopPlugin, Player player, SellGUI gui) {
         super(Component.text("Select Quantity"));
         super.player = player;
@@ -29,7 +30,7 @@ public class QuantiySelection extends PageGUI {
 
     @Override
     public void onClose(InventoryCloseEvent event) {
-        if(event.getReason() == InventoryCloseEvent.Reason.OPEN_NEW) return;
+        if (event.getReason() == InventoryCloseEvent.Reason.OPEN_NEW) return;
         sellGUI.open();
     }
 
