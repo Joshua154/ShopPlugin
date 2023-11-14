@@ -2,7 +2,6 @@ package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.StoredItemsGUI;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
