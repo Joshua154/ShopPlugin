@@ -27,7 +27,6 @@
 //     * public class Main {
 //     *     public static void main(String[] args) {
 //     *         Foo foo = new Foo("bar");
-//     *         System.out.println(ReflectionUtil.getField(Foo.class, "value", foo));
 //     *     }
 //     * }}
 //     * </pre>

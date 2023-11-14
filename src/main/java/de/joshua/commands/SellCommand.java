@@ -19,10 +19,6 @@ public class SellCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
-        if (!player.isOp()) {
-            ShopPlugin.sendMessage(Component.text("You are not allowed to use this command"), player);
-            return false;
-        }
 
 //        ItemStack item = player.getInventory().getItemInMainHand();
 //        Class<?> data = item.getType().data;

@@ -71,7 +71,6 @@ public class DataBaseUtil {
     }
 
     public static Pair<ResultSet, PreparedStatement> executeQuery(Connection connection, String query) {
-        System.out.println(query);
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             if (query.toLowerCase().startsWith("select")) {

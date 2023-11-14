@@ -58,7 +58,7 @@ public final class ShopPlugin extends JavaPlugin {
     private void establishDatabaseConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
-            this.databaseConnection = DriverManager.getConnection("jdbc:sqlite:plugins\\" + getDataFolder().getName() + "\\database.db");
+            this.databaseConnection = DriverManager.getConnection("jdbc:sqlite:plugins/" + getDataFolder().getName() + "/database.db");
         } catch (SQLException | ClassNotFoundException e) {
             getLogger().warning("Failed to connect to database");
             getLogger().warning(e.getMessage());

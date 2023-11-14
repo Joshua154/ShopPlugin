@@ -9,10 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -80,7 +77,7 @@ public class ShopDataBaseUtil {
                 }
                 ItemStack item = ItemStack.deserializeBytes(fromString(resultSet.getString("item")));
                 UUID from_uuid = UUID.fromString(resultSet.getString("from_uuid"));
-                long created_at = resultSet.getLong("timestamp");
+                String created_at = resultSet.getString("timestamp");
                 StoredItemDataBase storedItemDataBase = new StoredItemDataBase(
                         resultSet.getInt("id"),
                         item,
@@ -103,8 +100,8 @@ public class ShopDataBaseUtil {
         return storedItemDataBases;
     }
 
-    private static LocalDateTime parseDateTime(Long millis) {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), TimeZone.getDefault().toZoneId());
+    private static LocalDateTime parseDateTime(String timestamp) {
+        return Timestamp.valueOf(timestamp).toLocalDateTime();
     }
 
     private static byte[] fromString(String input) {
@@ -149,7 +146,7 @@ public class ShopDataBaseUtil {
 
     public static void removeItem(Connection connection, SellItemDataBase item) {
         removeAllOffers(connection, item.dbID());
-        String query = DataBaseUtil.getDeleteQuery("storedItems", "id=" + item.dbID());
+        String query = DataBaseUtil.getDeleteQuery("sellItems", "id=" + item.dbID());
         DataBaseUtil.executeQuery(connection, query);
     }
 
@@ -234,7 +231,7 @@ public class ShopDataBaseUtil {
                 price = ItemStack.deserializeBytes(fromString(resultSet.getString("price")));
             }
             String seller_uuid = resultSet.getString("seller_uuid");
-            long created_at = resultSet.getLong("createdOn");
+            String created_at = resultSet.getString("createdOn");
             returnItem = new SellItemDataBase(
                     resultSet.getInt("id"),
                     item,
@@ -266,7 +263,6 @@ public class ShopDataBaseUtil {
     public static void removeAllOffers(Connection connection, int sellItemID) {
         List<OfferItemDataBase> getOfferedItems = getOfferedItems(connection, sellItemID);
         getOfferedItems.forEach(offerItemDataBase -> {
-            System.out.println(offerItemDataBase.dbID());
             addStoredItem(connection, offerItemDataBase.offer(), offerItemDataBase.seller(), offerItemDataBase.offeredBy(), -1);
             removeOffer(connection, offerItemDataBase.dbID());
         });
@@ -299,7 +295,7 @@ public class ShopDataBaseUtil {
                 ItemStack offeredItem = ItemStack.deserializeBytes(fromString(resultSet.getString("offeredItem")));
                 UUID from_uuid = UUID.fromString(resultSet.getString("from_uuid"));
                 UUID seller_uuid = UUID.fromString(resultSet.getString("to_uuid"));
-                long created_at = resultSet.getLong("timestamp");
+                String created_at = resultSet.getString("timestamp");
                 int id = resultSet.getInt("id");
                 int buyItemID = resultSet.getInt("buyItemID");
                 SellItemDataBase sellItem = null;

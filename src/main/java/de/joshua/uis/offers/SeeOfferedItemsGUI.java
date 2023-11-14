@@ -33,7 +33,7 @@ public class SeeOfferedItemsGUI extends PageGUI {
 
     @Override
     public void onClose(InventoryCloseEvent event) {
-        System.out.println(event.getReason());
+
     }
 
     public void open() {

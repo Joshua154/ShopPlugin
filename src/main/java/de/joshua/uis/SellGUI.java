@@ -161,16 +161,17 @@ public class SellGUI implements IGUI {
 
         String playerUUID = player.getUniqueId().toString();
 
-        ItemStack priceItem = collectedItems.get(SellItemType.SET_PRICE);
+        ItemStack sell_Item = collectedItems.get(SellItemType.SELL_ITEM).clone();
+        ItemStack priceItem = collectedItems.get(SellItemType.SET_PRICE).clone();
+
+        collectedItems.remove(SellItemType.SELL_ITEM);
+        giveItemsBack();
+
         ItemMeta meta = priceItem.getItemMeta();
         meta.getPersistentDataContainer().remove(getGUIKey("sell_gui"));
         priceItem.setItemMeta(meta);
 
-        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.addNewSellItem(shopPlugin.getDatabaseConnection(), priceItem, sellPrice, playerUUID));
-
-        collectedItems.remove(SellItemType.SELL_ITEM);
-
-        giveItemsBack();
+        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.addNewSellItem(shopPlugin.getDatabaseConnection(), sell_Item, priceItem, playerUUID));
     }
 
     private void giveItemsBack() {
@@ -202,7 +203,6 @@ public class SellGUI implements IGUI {
     }
 
     public void setMaterial(Material material) {
-        System.out.println("Material: " + material);
         this.materialOverwrite = material;
     }
 
@@ -211,9 +211,6 @@ public class SellGUI implements IGUI {
     }
 
     public void updatePreviewItem() {
-        System.out.println(materialOverwrite);
-        System.out.println(quantityOverwrite);
-
         boolean modifiedMaterial = false;
 
         parseItems();

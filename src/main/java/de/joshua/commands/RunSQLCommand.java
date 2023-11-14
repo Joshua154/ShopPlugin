@@ -31,6 +31,7 @@ public class RunSQLCommand implements CommandExecutor {
             ShopPlugin.sendMessage(Component.text("You are not allowed to use this command"), player);
             return false;
         }
+
         Pair<ResultSet, PreparedStatement> result = DataBaseUtil.executeQuery(shopPlugin.getDatabaseConnection(), String.join(" ", args));
         ResultSet resultSet = result.getLeft();
         PreparedStatement preparedStatement = result.getRight();
