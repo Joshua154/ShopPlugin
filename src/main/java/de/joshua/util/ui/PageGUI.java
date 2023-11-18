@@ -22,6 +22,8 @@ public abstract class PageGUI implements IGUI {
     protected int itemsPerPage;
     protected int page;
     protected Player player;
+    protected List<ItemStack> cachedContent;
+    protected Inventory inventory = null;
 
     public PageGUI(Component guiTitle) {
         this.guiTitle = guiTitle;
@@ -38,7 +40,7 @@ public abstract class PageGUI implements IGUI {
     }
 
     protected int getPageCount() {
-        return Math.max(1, (int) Math.ceil(getContent().size() / Math.max(itemsPerPage, 1.0)));
+        return Math.max(1, (int) Math.ceil(cachedContent.size() / Math.max(itemsPerPage, 1.0)));
     }
 
     protected void switchPage(boolean direction) {
@@ -54,39 +56,18 @@ public abstract class PageGUI implements IGUI {
 
     protected List<ItemStack> getItemsFromPage(int page) {
         int startIndex = page * itemsPerPage;
-        int endIndex = Math.min((page + 1) * itemsPerPage, getContent().size());
+        int endIndex = Math.min((page + 1) * itemsPerPage, cachedContent.size());
 
-        if (getContent().isEmpty()) return List.of();
-        return getContent().subList(startIndex, endIndex);
+        if (cachedContent.isEmpty()) return List.of();
+        return cachedContent.subList(startIndex, endIndex);
     }
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, itemsPerPage + 9, guiTitle);
-        List<ItemStack> itemsOnPage = getItemsFromPage(this.page);
-        for (int i = 0; i < itemsPerPage + 1; i++) {
-            if (i < itemsOnPage.size()) {
-                inventory.setItem(i, itemsOnPage.get(i));
-            }
-        }
-        for (int i = this.itemsPerPage; i < this.itemsPerPage + 9; i++) {
-            inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
-                    .displayName(Component.empty())
-                    .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "background")
-                    .build());
-        }
-        if (getPage() != 0) {
-            inventory.setItem(5 * 9 + 1, new ItemBuilder(Material.ARROW)
-                    .displayName(Component.text("Back"))
-                    .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
-                    .build());
-        }
-        if (getPage() + 1 < getPageCount()) {
-            inventory.setItem(5 * 9 + 7, new ItemBuilder(Material.ARROW)
-                    .displayName(Component.text("Further"))
-                    .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "further")
-                    .build());
-        }
+        if(inventory == null)
+            inventory = Bukkit.createInventory(this, itemsPerPage + 9, guiTitle);
+
+        refresh();
         return inventory;
     }
 
@@ -112,6 +93,7 @@ public abstract class PageGUI implements IGUI {
 
     @Override
     public void open(Player player) {
+        setCachedContent(getContent());
         player.openInventory(getInventory());
         this.player = player;
     }
@@ -121,7 +103,30 @@ public abstract class PageGUI implements IGUI {
     }
 
     public void refresh() {
-        player.openInventory(getInventory());
+        List<ItemStack> itemsOnPage = getItemsFromPage(this.page);
+        for (int i = 0; i < itemsPerPage + 1; i++) {
+            if (i < itemsOnPage.size()) {
+                inventory.setItem(i, itemsOnPage.get(i));
+            }
+        }
+        for (int i = this.itemsPerPage; i < this.itemsPerPage + 9; i++) {
+            inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
+                    .displayName(Component.empty())
+                    .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "background")
+                    .build());
+        }
+        if (getPage() != 0) {
+            inventory.setItem(5 * 9 + 1, new ItemBuilder(Material.ARROW)
+                    .displayName(Component.text("Back"))
+                    .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
+                    .build());
+        }
+        if (getPage() + 1 < getPageCount()) {
+            inventory.setItem(5 * 9 + 7, new ItemBuilder(Material.ARROW)
+                    .displayName(Component.text("Further"))
+                    .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "further")
+                    .build());
+        }
     }
 
     public abstract List<ItemStack> getContent();
@@ -129,4 +134,8 @@ public abstract class PageGUI implements IGUI {
     public abstract void onItemClick(InventoryClickEvent event);
 
     public abstract void onPageSwitch();
+
+    public void setCachedContent(List<ItemStack> cachedContent) {
+        this.cachedContent = cachedContent;
+    }
 }

@@ -8,6 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.UUID;
 
 public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID seller, LocalDateTime created_at) {
@@ -15,7 +17,7 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
         return new ItemBuilder(item())
                 .lore(Component.text("Seller: " + Bukkit.getServer().getOfflinePlayer(seller()).getName()),
                         Component.text("Price: " + price().getType()),
-                        Component.text("Created at: " + created_at()))
+                        Component.text("Created at: " + getFormattedDate()))
                 .build();
     }
 
@@ -37,6 +39,11 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
     @Override
     public LocalDateTime created_at() {
         return created_at;
+    }
+
+    private String getFormattedDate() {
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+                .format(created_at());
     }
 
     public boolean isNotAvailable(Connection connection) {

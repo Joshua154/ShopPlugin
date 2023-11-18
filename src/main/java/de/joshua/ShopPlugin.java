@@ -4,6 +4,7 @@ import de.joshua.commands.AnnouceCommand;
 import de.joshua.commands.OppenBuyCommand;
 import de.joshua.commands.RunSQLCommand;
 import de.joshua.commands.ShopCommand;
+import de.joshua.util.DiscordWebhook;
 import de.joshua.util.ui.GUIEH;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -34,6 +35,7 @@ public final class ShopPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        getDataFolder().mkdir();
         establishDatabaseConnection();
         registerEvents();
         registerCommands();
@@ -67,5 +69,9 @@ public final class ShopPlugin extends JavaPlugin {
 
     public Connection getDatabaseConnection() {
         return databaseConnection;
+    }
+
+    public static DiscordWebhook getDiscordWebhook() {
+        return new DiscordWebhook("https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG");
     }
 }

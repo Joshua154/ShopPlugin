@@ -1,5 +1,6 @@
 package de.joshua.util;
 
+import de.joshua.ShopPlugin;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 
@@ -81,6 +82,7 @@ public class DataBaseUtil {
                 statement.close();
             }
         } catch (Exception e) {
+            ShopPlugin.getDiscordWebhook().sendError(Map.of("Query", query, "Message", e.getMessage()));
             Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.toString(e.getStackTrace()));
         }
         return Pair.of(null, null);

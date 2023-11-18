@@ -1,6 +1,16 @@
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "com.github.johnrengelman:shadow:8.1.1"
+    }
+}
+
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.2.0"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 version = '1.0'
@@ -21,6 +31,9 @@ dependencies {
     compileOnly "io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT"
     compileOnly "org.xerial:sqlite-jdbc:3.42.0.0"
 }
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
 
 def targetJavaVersion = 17
 java {
@@ -52,4 +65,12 @@ tasks {
         // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.20.2")
     }
+}
+
+tasks.register('createZIP', Zip) {
+    dependsOn build
+    from "build/libs"
+    include "*.jar"
+    archiveFileName = "ShopPlugin.zip"
+    destinationDirectory = file("build/zip")
 }
