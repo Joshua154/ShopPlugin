@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class QuantiySelection extends PageGUI {
-    private final String title = "Select Quantity";
     ShopPlugin shopPlugin;
     SellGUI sellGUI;
 
@@ -61,7 +60,7 @@ public class QuantiySelection extends PageGUI {
         if (!Objects.equals(event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING), "quantity_selection"))
             return;
 
-        sellGUI.setQuantity(event.getCurrentItem().getAmount());
+        sellGUI.setQuantity(getItemQuantity(event.getCurrentItem()));
         sellGUI.open();
     }
 
@@ -74,7 +73,7 @@ public class QuantiySelection extends PageGUI {
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
-    private Integer getItemName(ItemStack itemStack) {
+    private Integer getItemQuantity(ItemStack itemStack) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("item_quantity"), PersistentDataType.INTEGER);
     }
 }

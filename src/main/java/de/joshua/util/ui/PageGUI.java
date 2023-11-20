@@ -106,6 +106,7 @@ public abstract class PageGUI implements IGUI {
     public void refresh() {
         List<ItemStack> itemsOnPage = getItemsFromPage(this.page);
         inventory.clear();
+
         for (int i = 0; i < itemsPerPage + 1; i++) {
             if (i < itemsOnPage.size()) {
                 inventory.setItem(i, itemsOnPage.get(i));
