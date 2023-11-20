@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -36,7 +37,7 @@ public class RunSQLCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
-        if (!player.getUniqueId().equals(ShopPlugin.JOSHUA_UUID)) {
+        if (!Arrays.asList(ShopPlugin.SQL_UUIDS).contains(player.getUniqueId())){
             ShopPlugin.sendMessage(Component.text("You are not allowed to use this command"), player);
             return false;
         }
@@ -47,7 +48,7 @@ public class RunSQLCommand implements CommandExecutor {
                 try {
                     args[i] = getContent(arg);
                 } catch (IOException e) {
-                    Bukkit.getLogger().log(Level.SEVERE, "Error while getting gist", e);
+                    player.sendMessage(Component.text("Error while getting gist:" + e));
                 }
             }
         }

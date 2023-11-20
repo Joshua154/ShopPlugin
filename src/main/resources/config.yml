@@ -1,0 +1,42 @@
+shop.sql.uuids:
+  Joshua: "596b9acc-d337-4bed-a7a5-7c407d2938cf"
+shop.prefix: "<gray>[<bold><gradient:#ff930f:#fff95b>Shop</gradient></bold>]</gray><white>"
+discord.debugWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
+discord.ShopWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
+
+shop.command.announce: "<click:run_command:/open <item_id>>Click here to check this item out of <player_name>"
+
+shop.makeOffer.send: "Offer send"
+shop.makeOffer.accept: "Offer accepted"
+shop.makeOffer.invalid: "Not a valid Offer"
+shop.makeOffer.gui.name: "Make Offer"
+shop.makeOffer.gui.display.buyItem: "Item to Buy"
+shop.makeOffer.gui.display.offeredItem: "Offered Price"
+shop.makeOffer.gui.button.confirm: "Confirm Offer"
+shop.makeOffer.gui.button.cancel: "Cancel"
+
+
+shop.offers.deny: "Offer Removed"
+shop.offers.accept: "Item sold"
+shop.offers.gui.name: "Offer"
+shop.offers.gui.display.buyItem: "Item to Buy"
+shop.offers.gui.display.offeredItem: "Offered Price"
+shop.offers.gui.button.confirm: "Accept Offer"
+shop.offers.gui.button.cancel: "Cancel"
+shop.offers.gui.button.deny: "Denny Offer"
+
+
+shop.offers.deny: "Offer Removed"
+shop.offers.accept: "Item sold"
+shop.offers.gui.name: "Offer"
+shop.offers.gui.display.buyItem: "Item to Buy"
+shop.offers.gui.display.offeredItem: "Offered Price"
+shop.offers.gui.button.confirm: "Accept Offer"
+shop.offers.gui.button.cancel: "Cancel"
+shop.offers.gui.button.deny: "Denny Offer"
+
+
+shop.error.invalidArgs: "Invalid Arguments"
+shop.error.itemUnavailable: "This item is not available"
+shop.error.itemSold: "This item is already sold"
+shop.error.noPermission: "You are not allowed to use this command"

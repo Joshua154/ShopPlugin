@@ -19,7 +19,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 public final class ShopPlugin extends JavaPlugin {
-    public static final UUID JOSHUA_UUID = UUID.fromString("596b9acc-d337-4bed-a7a5-7c407d2938cf");
+    public static final UUID[] SQL_UUIDS = new UUID[]{
+            UUID.fromString("596b9acc-d337-4bed-a7a5-7c407d2938cf")
+    };
     private Connection databaseConnection;
 
     public static void sendMessage(Component component, Player... players) {

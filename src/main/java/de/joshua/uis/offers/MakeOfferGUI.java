@@ -98,7 +98,7 @@ public class MakeOfferGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Sell"));
+        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Make Offer"));
 
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
