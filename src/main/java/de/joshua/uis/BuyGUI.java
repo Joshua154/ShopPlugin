@@ -1,6 +1,7 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
+import de.joshua.commands.AnnouceCommand;
 import de.joshua.uis.offers.MakeOfferGUI;
 import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
@@ -54,12 +55,17 @@ public class BuyGUI implements IGUI {
                 case "offer" -> handlePriceOffer();
                 case "cancel" -> handleCancel();
                 case "remove" -> handleRemove();
+                case "annouce" -> handleAnnounce();
             }
         }
     }
 
     private void handleCancel() {
         new ShopGUI(shopPlugin).open(player);
+    }
+
+    private void handleAnnounce() {
+        AnnouceCommand.sendAnnouncement(String.valueOf(this.item.dbID()), this.player.displayName());
     }
 
     private void makePurchase() {
@@ -189,6 +195,13 @@ public class BuyGUI implements IGUI {
                     .displayName(Component.text("Remove"))
                     .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                     .persistentData(getGUIKey("type"), PersistentDataType.STRING, "remove")
+                    .build());
+        }
+        if (this.player.getUniqueId().equals(item.seller()) && this.player.hasPermission("shopplugin.announce")) {
+            inventory.setItem(9 + 8, new ItemBuilder(Material.GOAT_HORN)
+                    .displayName(Component.text("Annouce"))
+                    .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
+                    .persistentData(getGUIKey("type"), PersistentDataType.STRING, "annouce")
                     .build());
         }
 

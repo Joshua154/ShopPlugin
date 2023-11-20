@@ -3,6 +3,7 @@ package de.joshua.commands;
 import de.joshua.ShopPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,9 +25,18 @@ public class AnnouceCommand implements CommandExecutor {
             ShopPlugin.sendMessage(Component.text("Invalid Arguments"), player);
             return false;
         }
-
-        ShopPlugin.sendMessage(MiniMessage.miniMessage().deserialize("<click:run_command:/open " + args[0] + ">Click here to check this item out"), Bukkit.getOnlinePlayers().toArray(new Player[0]));
+        sendAnnouncement(args[0], player.displayName());
 
         return true;
+    }
+
+    public static void sendAnnouncement(String itemID, Component playerName) {
+        ShopPlugin.sendMessage(
+                MiniMessage.miniMessage().deserialize(
+                        "<click:run_command:/open <item_id>>Click here to check this item out of <player_name>",
+                        Placeholder.component("player_name", playerName),
+                        Placeholder.parsed("item_id", itemID)
+                ),
+                Bukkit.getOnlinePlayers().toArray(new Player[0]));
     }
 }

@@ -79,7 +79,7 @@ public class StoredItemsGUI extends PageGUI {
         Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.removeStoredItem(shopPlugin.getDatabaseConnection(), sIDB.dbID()));
 
         db_items.remove(sIDB);
-        setCachedContent(getContent());
+        updateCachedContent();
         refresh();
     }
 
@@ -90,6 +90,7 @@ public class StoredItemsGUI extends PageGUI {
     @Override
     public void onPageSwitch() {
         updateItems();
+        updateCachedContent();
     }
 
     private void updateItems() {

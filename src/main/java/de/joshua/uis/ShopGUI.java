@@ -115,6 +115,7 @@ public class ShopGUI extends PageGUI {
     @Override
     public void onPageSwitch() {
         updateItems();
+        updateCachedContent();
     }
 
     private void updateItems() {

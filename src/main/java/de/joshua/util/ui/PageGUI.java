@@ -14,6 +14,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -104,6 +105,7 @@ public abstract class PageGUI implements IGUI {
 
     public void refresh() {
         List<ItemStack> itemsOnPage = getItemsFromPage(this.page);
+        inventory.clear();
         for (int i = 0; i < itemsPerPage + 1; i++) {
             if (i < itemsOnPage.size()) {
                 inventory.setItem(i, itemsOnPage.get(i));
@@ -137,5 +139,9 @@ public abstract class PageGUI implements IGUI {
 
     public void setCachedContent(List<ItemStack> cachedContent) {
         this.cachedContent = cachedContent;
+    }
+
+    public void updateCachedContent() {
+        this.cachedContent = getContent();
     }
 }
