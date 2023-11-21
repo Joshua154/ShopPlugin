@@ -1,4 +1,4 @@
-package de.joshua.util;
+package de.joshua.util.database;
 
 import de.joshua.ShopPlugin;
 import org.apache.commons.lang3.tuple.Pair;

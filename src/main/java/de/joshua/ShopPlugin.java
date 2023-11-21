@@ -8,21 +8,24 @@ import de.joshua.util.DiscordWebhook;
 import de.joshua.util.ui.GUIEH;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 public final class ShopPlugin extends JavaPlugin {
-    public static final UUID[] SQL_UUIDS = new UUID[]{
-            UUID.fromString("596b9acc-d337-4bed-a7a5-7c407d2938cf")
-    };
+    public static UUID[] SQL_UUIDS;
     private Connection databaseConnection;
+    private static ShopPlugin instance;
 
     public static void sendMessage(Component component, Player... players) {
         Component msg = getPrefix().append(component);
@@ -32,7 +35,15 @@ public final class ShopPlugin extends JavaPlugin {
     }
 
     public static Component getPrefix() {
-        return MiniMessage.miniMessage().deserialize("<gray>[<bold><gradient:#ff930f:#fff95b>Shop</gradient></bold>]</gray><white>").append(Component.space());
+        return MiniMessage.miniMessage().deserialize(ShopPlugin.getConfigString("shop.prefix")).append(Component.space());
+    }
+
+    @Override
+    public void onLoad() {
+        instance = this;
+        this.saveDefaultConfig();
+
+        SQL_UUIDS = getConfig().getStringList("shop.sql.uuids").stream().map(UUID::fromString).toArray(UUID[]::new);
     }
 
     @Override
@@ -75,5 +86,24 @@ public final class ShopPlugin extends JavaPlugin {
 
     public static DiscordWebhook getDiscordWebhook() {
         return new DiscordWebhook("https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG");
+    }
+
+    public static ShopPlugin getInstance() {
+        return instance;
+    }
+    public static FileConfiguration getFileConfig() {
+        return instance.getConfig();
+    }
+    @NotNull
+    public static String getConfigString(String key){
+        return getFileConfig().getString(key) == null ?
+                "Err" :
+                Objects.requireNonNull(getFileConfig().getString(key));
+    }
+
+    public static List<String> getConfigStringList(String key) {
+        return getFileConfig().getString(key) == null ?
+                List.of("Err") :
+                Objects.requireNonNull(getFileConfig().getStringList(key));
     }
 }

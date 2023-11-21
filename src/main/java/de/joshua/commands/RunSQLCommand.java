@@ -1,11 +1,10 @@
 package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.DataBaseUtil;
+import de.joshua.util.database.DataBaseUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang3.tuple.Pair;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,7 +22,6 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +36,7 @@ public class RunSQLCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
         if (!Arrays.asList(ShopPlugin.SQL_UUIDS).contains(player.getUniqueId())){
-            ShopPlugin.sendMessage(Component.text("You are not allowed to use this command"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.noPermission")), player);
             return false;
         }
 

@@ -1,7 +1,7 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
 import de.joshua.util.dbItems.StoredItemDataBase;
 import de.joshua.util.item.ItemBuilder;
@@ -25,7 +25,7 @@ public class StoredItemsGUI extends PageGUI {
     List<StoredItemDataBase> db_items;
 
     public StoredItemsGUI(ShopPlugin shopPlugin, Player player) {
-        super(Component.text("Stored Items"));
+        super(Component.text(ShopPlugin.getConfigString("shop.storedItems.gui.name")));
         super.player = player;
         this.shopPlugin = shopPlugin;
         updateItems();
@@ -99,9 +99,11 @@ public class StoredItemsGUI extends PageGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
+        String goBack = ShopPlugin.getConfigString("shop.storedItems.gui.button.back");
+
         Inventory inventory = super.getInventory();
         inventory.setItem(9 * 5 + 4, new ItemBuilder(Material.RED_CONCRETE)
-                .displayName(Component.text("Go Back"))
+                .displayName(Component.text(goBack))
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "go_back_gui")
                 .build());
         return inventory;

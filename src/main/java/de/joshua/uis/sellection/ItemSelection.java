@@ -24,7 +24,7 @@ public class ItemSelection extends PageGUI {
     SellGUI sellGUI;
 
     public ItemSelection(ShopPlugin shopPlugin, Player player, SellGUI gui) {
-        super(Component.text("Select Item"));
+        super(Component.text(ShopPlugin.getConfigString("shop.selection.item.gui.display.buyItem")));
         super.player = player;
         this.shopPlugin = shopPlugin;
         this.sellGUI = gui;
@@ -50,6 +50,7 @@ public class ItemSelection extends PageGUI {
     private List<Material> getMaterials() {
         return Arrays.stream(Material.values())
                 .filter(m -> m.isItem() && !m.isAir())
+                .filter(m -> !m.name().contains(""))
                 .sorted(Comparator.comparing(Enum::name))
                 .toList();
     }
@@ -70,7 +71,7 @@ public class ItemSelection extends PageGUI {
     @Override
     public void onPageSwitch() {
         List<ItemStack> itemsFromPage = getItemsFromPage(getPage());
-        String title = "Select Item";
+        String title = ShopPlugin.getConfigString("shop.selection.item.gui.display.buyItem");;
         guiTitle = Component.text(title + ": " + getItemName(itemsFromPage.get(0)).toUpperCase().charAt(0) + " - " + getItemName(itemsFromPage.get(itemsFromPage.size() - 1)).toUpperCase().charAt(0));
     }
 

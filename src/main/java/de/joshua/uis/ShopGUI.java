@@ -2,7 +2,7 @@ package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.offers.SeeOfferedItemsGUI;
-import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
@@ -24,13 +24,17 @@ public class ShopGUI extends PageGUI {
     List<SellItemDataBase> db_items;
 
     public ShopGUI(ShopPlugin shopPlugin) {
-        super(Component.text("Shop"));
+        super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
         this.shopPlugin = shopPlugin;
         updateItems();
     }
 
     @Override
     public @NotNull Inventory getInventory() {
+        String sell = ShopPlugin.getConfigString("shop.shop.gui.button.sell");
+        String offeredItems = ShopPlugin.getConfigString("shop.shop.gui.button.offeredItems");
+        String storedItems = ShopPlugin.getConfigString("shop.shop.gui.button.storedItems");
+
         Inventory inventory = super.getInventory();
 
 //        inventory.setItem(9 * 5 + 2, new ItemBuilder(Material.RED_CONCRETE)
@@ -39,17 +43,17 @@ public class ShopGUI extends PageGUI {
 //                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "")
 //                .build());
         inventory.setItem(9 * 5 + 3, new ItemBuilder(Material.EMERALD)
-                .displayName(Component.text("Sell"))
+                .displayName(Component.text(sell))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "sell")
                 .build());
         inventory.setItem(9 * 5 + 4, new ItemBuilder(Material.BUNDLE)
-                .displayName(Component.text("Trade Offers"))
+                .displayName(Component.text(offeredItems))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "offers")
                 .build());
         inventory.setItem(9 * 5 + 5, new ItemBuilder(Material.CHEST)
-                .displayName(Component.text("Stored Items"))
+                .displayName(Component.text(storedItems))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
                 .build());

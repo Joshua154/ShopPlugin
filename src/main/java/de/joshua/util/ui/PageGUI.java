@@ -1,5 +1,6 @@
 package de.joshua.util.ui;
 
+import de.joshua.ShopPlugin;
 import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -120,13 +121,13 @@ public abstract class PageGUI implements IGUI {
         }
         if (getPage() != 0) {
             inventory.setItem(5 * 9 + 1, new ItemBuilder(Material.ARROW)
-                    .displayName(Component.text("Back"))
+                    .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.previous")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
                     .build());
         }
         if (getPage() + 1 < getPageCount()) {
             inventory.setItem(5 * 9 + 7, new ItemBuilder(Material.ARROW)
-                    .displayName(Component.text("Further"))
+                    .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.next")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "further")
                     .build());
         }

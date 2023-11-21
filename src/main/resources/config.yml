@@ -1,100 +1,98 @@
 shop.sql.uuids:
-  Joshua: "596b9acc-d337-4bed-a7a5-7c407d2938cf"
+  - "596b9acc-d337-4bed-a7a5-7c407d2938cf"
 shop.prefix: "<gray>[<bold><gradient:#ff930f:#fff95b>Shop</gradient></bold>]</gray><white>"
 discord.debugWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
-discord.ShopWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
+discord.shopWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
 
-shop.command.announce: "<click:run_command:/open <item_id>>Click here to check this item out of <player_name>"
-
-
-shop.makeOffer.success: "Offer send"
-shop.makeOffer.accept: "Offer accepted"
-shop.makeOffer.invalid: "Not a valid Offer"
-shop.makeOffer.gui.name: "Make Offer"
-shop.makeOffer.gui.display.buyItem: "Item to Buy"
-shop.makeOffer.gui.display.offeredItem: "Offered Price"
-shop.makeOffer.gui.button.confirm: "Confirm Offer"
-shop.makeOffer.gui.button.cancel: "Cancel"
+shop.command.announce: "<click:run_command:/open <item_id>>Drücke hier um das Angebot von <player_name> anzusehen"
 
 
-shop.offers.deny: "Offer Removed"
-shop.offers.accept: "Item sold"
-shop.offers.gui.name: "Offer"
-shop.offers.gui.display.buyItem: "Item to Buy"
-shop.offers.gui.display.offeredItem: "Offered Price"
-shop.offers.gui.button.confirm: "Accept Offer"
-shop.offers.gui.button.cancel: "Cancel"
-shop.offers.gui.button.deny: "Denny Offer"
+shop.makeOffer.success: "Angebot gesendet"
+shop.makeOffer.accept: "Angebot akzeptiert"
+shop.makeOffer.invalid: "Angebot ungültig"
+shop.makeOffer.gui.name: "Mache ein Angebot"
+shop.makeOffer.gui.display.buyItem: "Produkt"
+shop.makeOffer.gui.display.offeredItem: "Angebotenes Item"
+shop.makeOffer.gui.button.confirm: "Angebot senden"
+shop.makeOffer.gui.button.cancel: "Abbrechen"
 
 
-shop.offeredItems.gui.name: "Offers"
-shop.offeredItems.gui.button.back: "Go Back"
+shop.offers.deny: "Angebot entfernt"
+shop.offers.accept: "Item verkauft"
+shop.offers.gui.name: "Angebote"
+shop.offers.gui.display.buyItem: "Produkt"
+shop.offers.gui.display.offeredItem: "Angebotenes Item"
+shop.offers.gui.button.confirm: "Angebot akzeptieren"
+shop.offers.gui.button.cancel: "Abbrechen"
+shop.offers.gui.button.deny: "Angebot ablehnen"
 
 
-shop.storedItems.gui.name: "Stored Items"
-shop.storedItems.gui.button.back: "Go Back"
+shop.offeredItems.gui.name: "Angebote"
+shop.offeredItems.gui.button.back: "Zurück"
 
 
-shop.selection.item.gui.display.buyItem: "Select Item"
+shop.storedItems.gui.name: "Gelagerte Items"
+shop.storedItems.gui.button.back: "Zurück"
 
 
-shop.selection.quantity.gui.display.buyItem: "Select Quantity"
+shop.selection.item.gui.display.buyItem: "Wähle ein Item"
 
 
-shop.buy.success: "Item bought"
-shop.buy.notAffordable: "You can't afford this item"
-shop.buy.removed: "Item Removed"
-shop.buy.gui.name: "Buy"
-shop.buy.gui.display.buyItem: "Item to Buy"
-shop.buy.gui.display.price: "Price"
-shop.buy.gui.button.confirm: "Confirm Purchase"
-shop.buy.gui.button.sendOffer: "Send Price Offer"
-shop.buy.gui.button.cancel: "Cancel"
-shop.buy.gui.button.remove: "Remove"
-shop.buy.gui.button.announce: "Announce"
+shop.selection.quantity.gui.display.buyItem: "Wähle Anzahl"
 
 
-shop.sell.gui.name: "Sell"
-shop.sell.gui.display.sellItem: "Item to Sell"
-shop.sell.gui.display.customPrice: "Custom Price"
-shop.sell.gui.display.customPriceSelection: "Select Price"
-shop.sell.gui.button.confirm: "Confirm Purchase"
-shop.sell.gui.button.sendOffer: "Send Price Offer"
-shop.sell.gui.button.cancel: "Cancel"
+shop.buy.success: "Item gekauft"
+shop.buy.notAffordable: "Du kannst dir das Item nicht leisten"
+shop.buy.removed: "Item entfernt"
+shop.buy.gui.name: "Kaufen"
+shop.buy.gui.display.buyItem: "Produkt"
+shop.buy.gui.display.price: "Preis"
+shop.buy.gui.button.confirm: "Kauf bestätigen"
+shop.buy.gui.button.sendOffer: "Angebot senden"
+shop.buy.gui.button.cancel: "Abbrechen"
+shop.buy.gui.button.remove: "Item entfernen"
+shop.buy.gui.button.announce: "Ankündigen"
+
+
+shop.sell.gui.name: "Verkaufen"
+shop.sell.gui.display.sellItem: "Produkt"
+shop.sell.gui.display.customPrice: "Preis"
+shop.sell.gui.display.customPriceSelection: "Wähle ein Preis"
+shop.sell.gui.button.confirm: "Produkt verkaufen"
+shop.sell.gui.button.cancel: "Abbrechen"
 
 
 shop.shop.gui.name: "Shop"
-shop.shop.gui.button.sell: "Sell"
-shop.shop.gui.button.offeredItems: "Trade Offers"
-shop.shop.gui.button.storedItems: "Stored Items"
+shop.shop.gui.button.sell: "Verkaufen"
+shop.shop.gui.button.offeredItems: "Deine Angebote"
+shop.shop.gui.button.storedItems: "Gelagerte Items"
 
 
-shop.error.invalidArgs: "Invalid Arguments"
-shop.error.itemUnavailable: "This item is not available"
-shop.error.itemSold: "This item is already sold"
-shop.error.noPermission: "You are not allowed to use this command"
-shop.error.noSellItem: "No item to sell"
-shop.error.noPriceItem: "No item for Price"
+shop.error.invalidArgs: "Ungültige Argumente"
+shop.error.itemUnavailable: "Dieses Item ist nicht verfügbar"
+shop.error.itemSold: "Dieses Item wurde bereits verkauft"
+shop.error.noPermission: "Du hast keine Berechtigung für diesen Befehl"
+shop.error.noSellItem: "Du kannst keine Luft verkaufen"
+shop.error.noPriceItem: "Du musst einen Preis angeben"
+shop.error.unknown: "Unbekannt"
 
 
 shop.item.offered.lore:
-  - "Price: <price>"
-  - "Offered by: <offered_by>"
-  - "Offered at: <time>"
+  - "<!i><gray>Preis:</gray> <aqua><lang:<price_trans_key>></aqua>"
+  - "<!i><gray>Angebot von:</gray> <offered_by>"
+  - "<!i><gray>Angebot erstellt:</gray> <aqua><time></aqua>"
 
 
 shop.item.sellItem.lore:
-  - "Seller: <seller>"
-  - "Price: <price>"
-  - "Created at: <time>"
+  - "<!i><gray>Verkäufer:</gray> <seller>"
+  - "<!i><gray>Preis:</gray> <aqua><lang:<price_trans_key>></aqua>"
+  - "<!i><gray>erstellt am:</gray> <aqua><time></aqua>"
 
 
 shop.item.storedItems.lore:
-  - "Buyer: <bought_by>"
-  - "Created at: <time>"
+  - "<!i><gray>Gekauft von:</gray> <bought_by>"
+  - "<!i><gray>Gekauft am:</gray> <aqua><time></aqua>"
 
 
-shop.pageGUI.previous: "Previous Page"
-shop.pageGUI.next: "Next Page"
-
-
+shop.pageGUI.previous: "Vorherige Seite"
+shop.pageGUI.next: "Nächste Seite"

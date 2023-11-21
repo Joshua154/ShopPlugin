@@ -2,7 +2,7 @@ package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.BuyGUI;
-import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +21,7 @@ public class OppenBuyCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
         if (args.length != 1) {
-            ShopPlugin.sendMessage(Component.text("Invalid Arguments"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.invalidArgs")), player);
             return false;
         }
 
@@ -30,7 +30,7 @@ public class OppenBuyCommand implements CommandExecutor {
                     BuyGUI buyGUI = new BuyGUI(shopPlugin, sellItemDataBase, player);
                     buyGUI.open();
                 },
-                () -> ShopPlugin.sendMessage(Component.text("This item is not available"), player));
+                () -> ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.itemUnavailable")), player));
 
         return true;
     }

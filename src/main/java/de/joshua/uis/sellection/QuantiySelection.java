@@ -21,7 +21,7 @@ public class QuantiySelection extends PageGUI {
     SellGUI sellGUI;
 
     public QuantiySelection(ShopPlugin shopPlugin, Player player, SellGUI gui) {
-        super(Component.text("Select Quantity"));
+        super(Component.text(ShopPlugin.getConfigString("shop.selection.quantity.gui.display.buyItem")));
         super.player = player;
         this.shopPlugin = shopPlugin;
         this.sellGUI = gui;
@@ -44,7 +44,7 @@ public class QuantiySelection extends PageGUI {
                 .map(n ->
                         new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
                                 .amount(n)
-                                .displayName(Component.text(toCamelCase(n.toString())))
+                                .displayName(Component.text(n.toString()))
                                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "quantity_selection")
                                 .persistentData(getPageGUIKey("item_quantity"), PersistentDataType.INTEGER, n)
                                 .build()
@@ -67,10 +67,6 @@ public class QuantiySelection extends PageGUI {
     @Override
     public void onPageSwitch() {
 
-    }
-
-    private String toCamelCase(String s) {
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
     }
 
     private Integer getItemQuantity(ItemStack itemStack) {

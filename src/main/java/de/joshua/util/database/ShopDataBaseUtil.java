@@ -1,5 +1,6 @@
-package de.joshua.util;
+package de.joshua.util.database;
 
+import de.joshua.util.database.DataBaseUtil;
 import de.joshua.util.dbItems.OfferItemDataBase;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.dbItems.StoredItemDataBase;

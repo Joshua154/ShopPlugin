@@ -2,7 +2,7 @@ package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.sellection.ItemSelection;
-import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -96,7 +96,15 @@ public class SellGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Sell"));
+        String title = ShopPlugin.getConfigString("shop.sell.gui.name");
+        String sellItem = ShopPlugin.getConfigString("shop.sell.gui.display.sellItem");
+        String price = ShopPlugin.getConfigString("shop.sell.gui.display.customPrice");
+        String confirm = ShopPlugin.getConfigString("shop.sell.gui.button.confirm");
+        String cancel = ShopPlugin.getConfigString("shop.sell.gui.button.cancel");
+        String customPriceSelection = ShopPlugin.getConfigString("shop.sell.gui.button.customPriceSelection");
+
+
+        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text(title));
 
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
@@ -106,7 +114,7 @@ public class SellGUI implements IGUI {
         }
 
         inventory.setItem(9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Item to Sell"))
+                .displayName(Component.text(sellItem))
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 2, new ItemStack(Material.AIR));
@@ -115,7 +123,7 @@ public class SellGUI implements IGUI {
         }
 
         inventory.setItem(9 + 9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Custom Price"))
+                .displayName(Component.text(price))
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 9 + 2, new ItemStack(Material.AIR));
@@ -125,19 +133,19 @@ public class SellGUI implements IGUI {
 
 
         inventory.setItem(9 + 9 + 3, new ItemBuilder(Material.CHEST)
-                .displayName(Component.text("Select Price"))
+                .displayName(Component.text(customPriceSelection))
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "select_price")
                 .build());
 
 
         inventory.setItem(9 + 9 + 5, new ItemBuilder(Material.LIME_CONCRETE)
-                .displayName(Component.text("Confirm"))
+                .displayName(Component.text(confirm))
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "confirm")
                 .build());
         inventory.setItem(9 + 9 + 6, new ItemBuilder(Material.RED_CONCRETE)
-                .displayName(Component.text("Cancel"))
+                .displayName(Component.text(cancel))
                 .persistentData(getGUIKey("sell_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "cancel")
                 .build());
@@ -150,12 +158,12 @@ public class SellGUI implements IGUI {
         ItemStack sellPrice = collectedItems.get(SellItemType.SET_PRICE);
         if (sellItem == null) {
             giveItemsBack();
-            ShopPlugin.sendMessage(Component.text("Error: No item to sell!"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.noSellItem")), player);
             return;
         }
         if (sellPrice == null) {
             giveItemsBack();
-            ShopPlugin.sendMessage(Component.text("Error: No item for Price!"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.noPriceItem")), player);
             return;
         }
 
