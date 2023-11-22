@@ -9,11 +9,13 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 
 public class SQLiteQueue {
     private static final String DATABASE_URL = "jdbc:sqlite:/path/to/your/database.db";
+    private static List<String> DATABASE_TABLES = null;
     ShopPlugin shopPlugin;
     private final Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
     private Connection connection;
@@ -21,6 +23,7 @@ public class SQLiteQueue {
     public SQLiteQueue(ShopPlugin shopPlugin) {
         operationQueue = new LinkedList<>();
         this.shopPlugin = shopPlugin;
+        DATABASE_TABLES = shopPlugin.getConfig().getStringList("shop.sql.createTables");
 
         establishDatabaseConnection();
         initializeDatabase();
@@ -65,3 +68,4 @@ public class SQLiteQueue {
         }
     }
 }
+
