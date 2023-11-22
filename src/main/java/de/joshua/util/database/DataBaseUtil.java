@@ -1,7 +1,6 @@
 package de.joshua.util.database;
 
 import de.joshua.ShopPlugin;
-import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;

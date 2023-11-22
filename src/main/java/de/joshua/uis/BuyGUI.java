@@ -3,8 +3,8 @@ package de.joshua.uis;
 import de.joshua.ShopPlugin;
 import de.joshua.commands.AnnouceCommand;
 import de.joshua.uis.offers.MakeOfferGUI;
-import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -69,7 +69,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void makePurchase() {
-        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
+        if (item.isNotAvailable(shopPlugin)) {
             ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.itemUnavailable")), player);
             player.closeInventory();
             return;
@@ -96,7 +96,7 @@ public class BuyGUI implements IGUI {
             ShopUtil.addItemToInventory(player, item.item());
 
             player.closeInventory();
-            ShopDataBaseUtil.buyItem(shopPlugin.getDatabaseConnection(), item, player);
+            ShopDataBaseUtil.buyItem(shopPlugin, item, player);
             return;
         } else {
             ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.buy.notAffordable")), player);
@@ -120,7 +120,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void handleRemove() {
-        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
+        if (item.isNotAvailable(shopPlugin)) {
             ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.itemSold")), player);
             player.closeInventory();
             return;
@@ -128,7 +128,7 @@ public class BuyGUI implements IGUI {
 
         ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.buy.removed")), player);
 
-        ShopDataBaseUtil.removeItem(shopPlugin.getDatabaseConnection(), item);
+        ShopDataBaseUtil.removeItem(shopPlugin, item);
         ShopUtil.addItemToInventory(player, item.item());
 
         player.closeInventory();

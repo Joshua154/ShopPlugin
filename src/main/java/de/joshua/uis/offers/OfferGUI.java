@@ -1,8 +1,8 @@
 package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.OfferItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -58,14 +58,14 @@ public class OfferGUI implements IGUI {
     private void handleDenyOffer() {
         ShopPlugin.sendMessage(Component.text("Offer Removed"), player);
 
-        ShopDataBaseUtil.removeOffer(shopPlugin.getDatabaseConnection(), offer.dbID());
-        ShopDataBaseUtil.addStoredItem(shopPlugin.getDatabaseConnection(), offer.offer(), offer.seller(), offer.offeredBy(), -1);
+        ShopDataBaseUtil.removeOffer(shopPlugin, offer.dbID());
+        ShopDataBaseUtil.addStoredItem(shopPlugin, offer.offer(), offer.seller(), offer.offeredBy(), -1);
 
         player.closeInventory();
     }
 
     private void handleConfirmOffer() {
-        if (offer.sellItem().isNotAvailable(shopPlugin.getDatabaseConnection())) {
+        if (offer.sellItem().isNotAvailable(shopPlugin)) {
             String msg = ShopPlugin.getConfigString("shop.error.itemSold");
             ShopPlugin.sendMessage(Component.text(msg), player);
             player.closeInventory();
@@ -76,7 +76,7 @@ public class OfferGUI implements IGUI {
         ShopPlugin.sendMessage(Component.text(msg), player);
         ShopUtil.addItemToInventory(player, offer.offer());
         player.closeInventory();
-        ShopDataBaseUtil.buyItemWithOffer(shopPlugin.getDatabaseConnection(), offer);
+        ShopDataBaseUtil.buyItemWithOffer(shopPlugin, offer);
     }
 
     @Override

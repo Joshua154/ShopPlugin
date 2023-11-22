@@ -5,8 +5,6 @@ import de.joshua.uis.SellGUI;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -71,7 +69,7 @@ public class ItemSelection extends PageGUI {
     @Override
     public void onPageSwitch() {
         List<ItemStack> itemsFromPage = getItemsFromPage(getPage());
-        String title = ShopPlugin.getConfigString("shop.selection.item.gui.display.buyItem");;
+        String title = ShopPlugin.getConfigString("shop.selection.item.gui.display.buyItem");
         guiTitle = Component.text(title + ": " + getItemName(itemsFromPage.get(0)).toUpperCase().charAt(0) + " - " + getItemName(itemsFromPage.get(itemsFromPage.size() - 1)).toUpperCase().charAt(0));
     }
 

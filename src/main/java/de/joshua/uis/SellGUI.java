@@ -2,8 +2,8 @@ package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.sellection.ItemSelection;
-import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
 import net.kyori.adventure.text.Component;
@@ -179,7 +179,7 @@ public class SellGUI implements IGUI {
         meta.getPersistentDataContainer().remove(getGUIKey("sell_gui"));
         priceItem.setItemMeta(meta);
 
-        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.addNewSellItem(shopPlugin.getDatabaseConnection(), sell_Item, priceItem, playerUUID));
+        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.addNewSellItem(shopPlugin, sell_Item, priceItem, playerUUID));
     }
 
     private void giveItemsBack() {

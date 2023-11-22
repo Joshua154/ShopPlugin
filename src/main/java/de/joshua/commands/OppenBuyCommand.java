@@ -25,7 +25,7 @@ public class OppenBuyCommand implements CommandExecutor {
             return false;
         }
 
-        ShopDataBaseUtil.getSpecificSellItem(shopPlugin.getDatabaseConnection(), Integer.parseInt(args[0])).ifPresentOrElse(
+        ShopDataBaseUtil.getSpecificSellItem(shopPlugin, Integer.parseInt(args[0])).ifPresentOrElse(
                 sellItemDataBase -> {
                     BuyGUI buyGUI = new BuyGUI(shopPlugin, sellItemDataBase, player);
                     buyGUI.open();

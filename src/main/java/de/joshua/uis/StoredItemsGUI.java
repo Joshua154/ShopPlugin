@@ -1,8 +1,8 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.StoredItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;

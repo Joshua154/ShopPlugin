@@ -11,8 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
 public class AnnouceCommand implements CommandExecutor {
     ShopPlugin shopPlugin;
 

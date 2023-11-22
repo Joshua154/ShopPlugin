@@ -67,7 +67,7 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
                 .format(created_at());
     }
 
-    public boolean isNotAvailable(Connection connection) {
-        return !ShopDataBaseUtil.isStillAvailable(connection, dbID);
+    public boolean isNotAvailable(ShopPlugin shopPlugin) {
+        return !ShopDataBaseUtil.isStillAvailable(shopPlugin, dbID);
     }
 }

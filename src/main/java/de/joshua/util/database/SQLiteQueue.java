@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 public class SQLiteQueue {
     private static final String DATABASE_URL = "jdbc:sqlite:/path/to/your/database.db";
     ShopPlugin shopPlugin;
-    private Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
+    private final Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
     private Connection connection;
 
     public SQLiteQueue(ShopPlugin shopPlugin) {

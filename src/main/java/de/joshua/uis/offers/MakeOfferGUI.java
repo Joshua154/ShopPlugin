@@ -1,8 +1,8 @@
 package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -58,7 +58,7 @@ public class MakeOfferGUI implements IGUI {
     }
 
     private void offerPrice(ItemStack offeredItem) {
-        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
+        if (item.isNotAvailable(shopPlugin)) {
             String msg = ShopPlugin.getConfigString("shop.error.itemSold");
             ShopPlugin.sendMessage(Component.text(msg), player);
             player.closeInventory();
@@ -70,7 +70,7 @@ public class MakeOfferGUI implements IGUI {
         inventory.setItem(priceSlot, new ItemBuilder().build());
         player.closeInventory();
         if (validOffer) {
-            ShopDataBaseUtil.addOffer(shopPlugin.getDatabaseConnection(), player, item, offeredItem);
+            ShopDataBaseUtil.addOffer(shopPlugin, player, item, offeredItem);
             String msg = ShopPlugin.getConfigString("shop.makeOffer.success");
             ShopPlugin.sendMessage(Component.text(msg), player);
         } else {

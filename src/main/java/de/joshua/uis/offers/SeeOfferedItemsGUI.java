@@ -85,7 +85,7 @@ public class SeeOfferedItemsGUI extends PageGUI {
     }
 
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getOfferedItems(shopPlugin.getDatabaseConnection(), this.player.getUniqueId());
+        db_items = ShopDataBaseUtil.getOfferedItems(shopPlugin, this.player.getUniqueId());
     }
 
     @Override
