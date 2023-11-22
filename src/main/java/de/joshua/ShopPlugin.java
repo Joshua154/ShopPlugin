@@ -39,7 +39,6 @@ public final class ShopPlugin extends JavaPlugin {
     public void onLoad() {
         instance = this;
         this.saveDefaultConfig();
-        this.sqlQueue = new SQLiteQueue(this);
 
         SQL_UUIDS = getConfig().getStringList("shop.sql.uuids").stream().map(UUID::fromString).toArray(UUID[]::new);
     }
@@ -47,6 +46,7 @@ public final class ShopPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         getDataFolder().mkdir();
+        this.sqlQueue = new SQLiteQueue(this);
         registerEvents();
         registerCommands();
     }

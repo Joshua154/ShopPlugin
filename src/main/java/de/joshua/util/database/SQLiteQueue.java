@@ -13,47 +13,53 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 
+import static java.util.concurrent.CompletableFuture.supplyAsync;
+
 public class SQLiteQueue {
-    private static final String DATABASE_URL = "jdbc:sqlite:/path/to/your/database.db";
     private static List<String> DATABASE_TABLES = null;
     ShopPlugin shopPlugin;
     private final Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
     private Connection connection;
+    private boolean isProcessing = false;
 
     public SQLiteQueue(ShopPlugin shopPlugin) {
         operationQueue = new LinkedList<>();
         this.shopPlugin = shopPlugin;
         DATABASE_TABLES = shopPlugin.getConfig().getStringList("shop.sql.createTables");
 
-        establishDatabaseConnection();
         initializeDatabase();
     }
 
     private void initializeDatabase() {
-        try {
-            connection = DriverManager.getConnection(DATABASE_URL);
-            String createTableQuery = ""; //TODO: Add table query
-            enqueueOperation(createTableQuery);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        for (String table : DATABASE_TABLES) {
+            enqueueOperation(table);
         }
     }
 
 
-    public CompletableFuture<ResultSet> enqueueOperation(String data) {
-        CompletableFuture<ResultSet> future = new CompletableFuture<>();
-        operationQueue.offer(Pair.of(data, future));
-        shopPlugin.getServer().getScheduler().runTaskAsynchronously(shopPlugin, this::executeNextOperation);
-        return future;
+    public synchronized CompletableFuture<ResultSet> enqueueOperation(String request) {
+        return CompletableFuture.supplyAsync(() -> {
+            CompletableFuture<ResultSet> future = new CompletableFuture<>();
+            Pair<String, CompletableFuture<ResultSet>> pair = Pair.of(request, future);
+            operationQueue.add(pair);
+            if (!isProcessing) {
+                processQueue();
+            }
+            return future.join();
+        });
     }
 
-    private void executeNextOperation() {
-        if (!operationQueue.isEmpty()) {
-            Pair<String, CompletableFuture<ResultSet>> operation = operationQueue.peek();
-            String data = operation.left();
-            ResultSet resultSet = DataBaseUtil.executeQuery(connection, data);
-            operation.right().complete(resultSet);
-            operationQueue.remove();
+    private void processQueue() {
+        while (!operationQueue.isEmpty()) {
+            Pair<String, CompletableFuture<ResultSet>> pair = operationQueue.poll();
+            String operation = pair.left();
+            System.out.println(operation);
+            CompletableFuture<ResultSet> future = pair.right();
+
+            establishDatabaseConnection();
+            ResultSet resultSet = DataBaseUtil.executeQuery(connection, operation).join();
+
+            future.complete(resultSet);
         }
     }
 

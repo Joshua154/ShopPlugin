@@ -33,11 +33,12 @@ public class ShopDataBaseUtil {
         shopPlugin.getSQLQueue().enqueueOperation(query);
     }
 
-    public static List<SellItemDataBase> getForSellItems(ShopPlugin shopPlugin) {
-        String query = DataBaseUtil.getSelectWhereQuery("sellItems", "bought IS 0", "*");
-        CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
-        AtomicReference<List<SellItemDataBase>> returnList = new AtomicReference<>(new ArrayList<>());
-        future.thenAcceptAsync(resultSet -> {
+    public static CompletableFuture<List<SellItemDataBase>> getForSellItems(ShopPlugin shopPlugin) {
+        return CompletableFuture.supplyAsync(() -> {
+            String query = DataBaseUtil.getSelectWhereQuery("sellItems", "bought IS 0", "*");
+            AtomicReference<List<SellItemDataBase>> returnList = new AtomicReference<>(new ArrayList<>());
+
+            ResultSet resultSet = shopPlugin.getSQLQueue().enqueueOperation(query).join();
             while (true) {
                 try {
                     if (resultSet == null) break;
@@ -50,19 +51,23 @@ public class ShopDataBaseUtil {
                     Bukkit.getLogger().log(Level.WARNING, "Error while getting sell items from database", e);
                 }
             }
+            return returnList.get();
         });
-        return returnList.get();
     }
 
-    public static List<StoredItemDataBase> getStoredItems(ShopPlugin shopPlugin, UUID seller_uuid) {
-        String query = DataBaseUtil.getSelectWhereQuery("storedItems", "to_uuid IS '" + seller_uuid + "'", "*");
-        CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
+    public static CompletableFuture<List<StoredItemDataBase>> getStoredItems(ShopPlugin shopPlugin, UUID seller_uuid) {
+        CompletableFuture<List<StoredItemDataBase>> returnFeature = new CompletableFuture<>();
+        return CompletableFuture.supplyAsync(() -> {
+            String query = DataBaseUtil.getSelectWhereQuery("storedItems", "to_uuid IS '" + seller_uuid + "'", "*");
+            CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
+            List<StoredItemDataBase> returnList = new ArrayList<>();
 
-        AtomicReference<List<StoredItemDataBase>> returnList = new AtomicReference<>(new ArrayList<>());
-        future.thenAcceptAsync(resultSet -> {
+            ResultSet resultSet = future.join();
             while (true) {
                 try {
                     if (resultSet == null) break;
+                    if (!resultSet.next()) break;
+
                     ItemStack item = ItemStack.deserializeBytes(fromString(resultSet.getString("item")));
                     UUID from_uuid = UUID.fromString(resultSet.getString("from_uuid"));
                     String created_at = resultSet.getString("timestamp");
@@ -75,13 +80,13 @@ public class ShopDataBaseUtil {
                             resultSet.getInt("soldItemID")
                     );
 
-                    returnList.get().add(storedItemDataBase);
+                    returnList.add(storedItemDataBase);
                 } catch (SQLException e) {
                     Bukkit.getLogger().log(Level.WARNING, "Error while getting stored items from database", e);
                 }
             }
+            return returnList;
         });
-        return returnList.get();
     }
 
     private static LocalDateTime parseDateTime(String timestamp) {
@@ -125,7 +130,7 @@ public class ShopDataBaseUtil {
 
     public static void setSellItemToBought(ShopPlugin shopPlugin, int id, Map<String, Object> values) {
         String query = DataBaseUtil.getUpdateQuery("sellItems", Map.entry("id", id), values);
-        shopPlugin.getSQLQueue().enqueueOperation(query); //TODO add this
+        shopPlugin.getSQLQueue().enqueueOperation(query);
     }
 
     public static void removeItem(ShopPlugin shopPlugin, SellItemDataBase item) {
@@ -171,25 +176,27 @@ public class ShopDataBaseUtil {
         shopPlugin.getSQLQueue().enqueueOperation(query);
     }
 
-    public static Optional<SellItemDataBase> getSpecificSellItem(ShopPlugin shopPlugin, int id) {
-        String query = DataBaseUtil.getSelectWhereQuery("sellItems", "bought IS 0 AND id IS " + id, "*");
-        CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
+    public static CompletableFuture<Optional<SellItemDataBase>> getSpecificSellItem(ShopPlugin shopPlugin, int id) {
+        CompletableFuture<Optional<SellItemDataBase>> returnFeature = new CompletableFuture<>();
+        return CompletableFuture.supplyAsync(() -> {
+            String query = DataBaseUtil.getSelectWhereQuery("sellItems", "bought IS 0 AND id IS " + id, "*");
+            CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
+            Optional<SellItemDataBase> returnOptional = Optional.empty();
 
-        AtomicReference<Optional<SellItemDataBase>> returnOptional = new AtomicReference<>(Optional.empty());
-        future.thenAcceptAsync(resultSet -> {
+            ResultSet resultSet = future.join();
             while (true) {
                 try {
                     if (resultSet == null) break;
                     if (!resultSet.next()) break;
 
 
-                    returnOptional.set(Optional.ofNullable(parseItem(resultSet)));
+                    returnOptional = Optional.ofNullable(parseItem(resultSet));
                 } catch (SQLException e) {
                     Bukkit.getLogger().log(Level.WARNING, "Error while getting sell item from database", e);
                 }
             }
+            return returnOptional;
         });
-        return returnOptional.get();
     }
 
     private static SellItemDataBase parseItem(ResultSet resultSet) {
@@ -232,29 +239,31 @@ public class ShopDataBaseUtil {
     }
 
     public static void removeAllOffers(ShopPlugin shopPlugin, int sellItemID) {
-        List<OfferItemDataBase> getOfferedItems = getOfferedItems(shopPlugin, sellItemID);
+        List<OfferItemDataBase> getOfferedItems = getOfferedItems(shopPlugin, sellItemID).join();
         getOfferedItems.forEach(offerItemDataBase -> {
             addStoredItem(shopPlugin, offerItemDataBase.offer(), offerItemDataBase.seller(), offerItemDataBase.offeredBy(), -1);
             removeOffer(shopPlugin, offerItemDataBase.dbID());
         });
     }
 
-    public static List<OfferItemDataBase> getOfferedItems(ShopPlugin shopPlugin, UUID seller_uuid) {
+    public static CompletableFuture<List<OfferItemDataBase>> getOfferedItems(ShopPlugin shopPlugin, UUID seller_uuid) {
         String query = DataBaseUtil.getSelectWhereQuery("itemOffers", "to_uuid IS '" + seller_uuid + "'", "*");
         return getOffersWithQuery(shopPlugin, query);
     }
 
-    public static List<OfferItemDataBase> getOfferedItems(ShopPlugin shopPlugin, int buyItemID) {
+    public static CompletableFuture<List<OfferItemDataBase>> getOfferedItems(ShopPlugin shopPlugin, int buyItemID) {
         String query = DataBaseUtil.getSelectWhereQuery("itemOffers", "buyItemID IS '" + buyItemID + "'", "*");
         return getOffersWithQuery(shopPlugin, query);
     }
 
-    private static List<OfferItemDataBase> getOffersWithQuery(ShopPlugin shopPlugin, String query) {
-        CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
+    private static CompletableFuture<List<OfferItemDataBase>> getOffersWithQuery(ShopPlugin shopPlugin, String query) {
+        CompletableFuture<List<OfferItemDataBase>> returnFeature = new CompletableFuture<>();
+        return CompletableFuture.supplyAsync(() -> {
+            CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(query);
 
-        AtomicReference<List<OfferItemDataBase>> returnList = new AtomicReference<>(new ArrayList<>());
-        future.thenAcceptAsync(resultSet -> {
-            List<SellItemDataBase> cachedItems = new java.util.ArrayList<>();
+            List<OfferItemDataBase> returnList = new ArrayList<>();
+            List<SellItemDataBase> cachedItems = new ArrayList<>();
+            ResultSet resultSet = future.join();
             while (true) {
                 try {
                     if (resultSet == null) break;
@@ -268,7 +277,7 @@ public class ShopDataBaseUtil {
                     int buyItemID = resultSet.getInt("buyItemID");
                     SellItemDataBase sellItem = null;
                     if (cachedItems.isEmpty() || cachedItems.stream().noneMatch(sellItemDataBase -> sellItemDataBase.dbID() == id)) {
-                        Optional<SellItemDataBase> sellItemDataBase = getSpecificSellItem(shopPlugin, buyItemID);
+                        Optional<SellItemDataBase> sellItemDataBase = getSpecificSellItem(shopPlugin, buyItemID).join();
                         if (sellItemDataBase.isPresent()) {
                             sellItem = sellItemDataBase.get();
                             cachedItems.add(sellItemDataBase.get());
@@ -287,12 +296,12 @@ public class ShopDataBaseUtil {
                             sellItem
                     );
 
-                    returnList.get().add(offerItemDataBase);
+                    returnList.add(offerItemDataBase);
                 } catch (SQLException e) {
                     Bukkit.getLogger().log(Level.WARNING, "Error while getting stored items from database", e);
                 }
             }
+            return returnList;
         });
-        return returnList.get();
     }
 }

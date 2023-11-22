@@ -48,7 +48,6 @@ public class ItemSelection extends PageGUI {
     private List<Material> getMaterials() {
         return Arrays.stream(Material.values())
                 .filter(m -> m.isItem() && !m.isAir())
-                .filter(m -> !m.name().contains(""))
                 .sorted(Comparator.comparing(Enum::name))
                 .toList();
     }

@@ -10,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 public class OppenBuyCommand implements CommandExecutor {
     ShopPlugin shopPlugin;
 
@@ -25,7 +27,7 @@ public class OppenBuyCommand implements CommandExecutor {
             return false;
         }
 
-        ShopDataBaseUtil.getSpecificSellItem(shopPlugin, Integer.parseInt(args[0])).ifPresentOrElse(
+        ShopDataBaseUtil.getSpecificSellItem(shopPlugin, Integer.parseInt(args[0])).join().ifPresentOrElse(
                 sellItemDataBase -> {
                     BuyGUI buyGUI = new BuyGUI(shopPlugin, sellItemDataBase, player);
                     buyGUI.open();

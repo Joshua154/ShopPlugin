@@ -4,6 +4,7 @@ import de.joshua.ShopPlugin;
 import de.joshua.uis.ShopGUI;
 import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.OfferItemDataBase;
+import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class SeeOfferedItemsGUI extends PageGUI {
     ShopPlugin shopPlugin;
@@ -85,13 +87,14 @@ public class SeeOfferedItemsGUI extends PageGUI {
     }
 
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getOfferedItems(shopPlugin, this.player.getUniqueId());
+        CompletableFuture<List<OfferItemDataBase>> future = ShopDataBaseUtil.getOfferedItems(shopPlugin, this.player.getUniqueId());
+        db_items = future.join();
     }
 
     @Override
     public @NotNull Inventory getInventory() {
         String goBack = ShopPlugin.getConfigString("shop.offeredItems.gui.button.back");
-        
+
         Inventory inventory = super.getInventory();
         inventory.setItem(9 * 5 + 4, new ItemBuilder(Material.RED_CONCRETE)
                 .displayName(Component.text(goBack))

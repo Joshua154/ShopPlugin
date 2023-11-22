@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class ShopGUI extends PageGUI {
     ShopPlugin shopPlugin;
@@ -77,7 +78,7 @@ public class ShopGUI extends PageGUI {
     }
 
     private ItemStack generateItem(SellItemDataBase sellItemDataBase) {
-        return new ItemBuilder(sellItemDataBase.getPreviewItem())
+        return new ItemBuilder(sellItemDataBase.getPreviewItem(getPageGUIKey("item_id")))
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "purchasable")
                 .build();
     }
@@ -92,9 +93,13 @@ public class ShopGUI extends PageGUI {
         if (!clickedItem.hasItemMeta()) return;
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(getPageGUIKey("type"), PersistentDataType.STRING))
             return;
+
         switch (Objects.requireNonNull(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING))) {
             case "purchasable" -> {
-                SellItemDataBase sellItemDataBase = db_items.get(slot);
+                if (!clickedItem.getItemMeta().getPersistentDataContainer().has(getPageGUIKey("item_id"), PersistentDataType.INTEGER))
+                    return;
+                Integer dbID = clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("item_id"), PersistentDataType.INTEGER);
+                SellItemDataBase sellItemDataBase = db_items.stream().filter(dbI -> dbI.dbID() == dbID).findFirst().orElse(null);
                 BuyGUI buyGUI = new BuyGUI(shopPlugin, sellItemDataBase, player);
                 buyGUI.open();
             }
@@ -123,7 +128,8 @@ public class ShopGUI extends PageGUI {
     }
 
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getForSellItems(shopPlugin);
+        CompletableFuture<List<SellItemDataBase>> future = ShopDataBaseUtil.getForSellItems(shopPlugin);
+        db_items = future.join();
     }
 }
 

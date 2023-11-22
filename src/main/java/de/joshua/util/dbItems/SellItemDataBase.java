@@ -8,8 +8,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.sql.Connection;
 import java.time.LocalDateTime;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID seller, LocalDateTime created_at) {
-    public ItemStack getPreviewItem() {
+    public ItemStack getPreviewItem(NamespacedKey key) {
         Component playerComponent;
         Player player = Bukkit.getServer().getOfflinePlayer(seller()).getPlayer();
         if(player == null) {
@@ -39,6 +41,7 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
                 .toList();
         return new ItemBuilder(item())
                 .lore(lore.toArray(Component[]::new))
+                .persistentData(key, PersistentDataType.INTEGER, dbID)
                 .build();
     }
 
@@ -68,6 +71,7 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
     }
 
     public boolean isNotAvailable(ShopPlugin shopPlugin) {
-        return !ShopDataBaseUtil.isStillAvailable(shopPlugin, dbID);
+//        return !ShopDataBaseUtil.isStillAvailable(shopPlugin, dbID);
+        return false;
     }
 }

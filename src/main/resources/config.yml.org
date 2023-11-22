@@ -97,3 +97,42 @@ shop.item.storedItems.lore:
 
 shop.pageGUI.previous: "Previous Page"
 shop.pageGUI.next: "Next Page"
+
+shop.sql.createTables:
+    - "create table storedItems
+    (
+       id         integer                            not null
+           constraint storedItems_pk
+               primary key autoincrement,
+       to_uuid    VARCHAR(40)                        not null,
+       from_uuid  VARCHAR(40)                        not null,
+       timestamp  DATETIME default CURRENT_TIMESTAMP not null,
+       item       text                               not null,
+       soldItemID integer
+           constraint storedItems_sell_items_id_fk
+               references sell_items ()
+    );"
+    - "create table sellItems
+      (
+          id          integer     not null
+              constraint sellItems_pk
+                  primary key autoincrement,
+          seller_uuid VARCHAR(40) not null,
+          createdOn   DATETIME default CURRENT_TIMESTAMP,
+          boughtAt    TIMESTAMP,
+          item        text        not null,
+          price       text,
+          bought      BOOLEAN  default FALSE,
+          buyer_uuid  VARCHAR(40)
+    );"
+    - "create table itemOffers
+    (
+      id          integer                            not null
+      constraint storedItems_pk
+      primary key autoincrement,
+      to_uuid     VARCHAR(40)                        not null,
+      from_uuid   VARCHAR(40)                        not null,
+      timestamp   DATETIME default CURRENT_TIMESTAMP not null,
+      offeredItem text                               not null,
+      buyItemID   integer
+    );"

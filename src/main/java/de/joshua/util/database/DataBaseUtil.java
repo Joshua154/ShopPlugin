@@ -4,11 +4,10 @@ import de.joshua.ShopPlugin;
 import org.bukkit.Bukkit;
 
 import javax.annotation.Nullable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("unused")
 public class DataBaseUtil {
@@ -71,25 +70,30 @@ public class DataBaseUtil {
         return "DELETE FROM " + tableName + " WHERE " + where + ";";
     }
 
-    @Nullable
-    public static ResultSet executeQuery(Connection connection, String query) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
 
-        try{
-            ps = connection.prepareStatement(query);
-            ps.executeUpdate();
-            rs = ps.executeQuery();
-        } catch (Exception e) {
-            ShopPlugin.getDiscordWebhook().sendError(Map.of("Query", query, "Message", e.getMessage()));
-            Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.toString(e.getStackTrace()));
-        } finally {
-            try { rs.close(); } catch (Exception e) { /* Ignored */ }
-            try { ps.close(); } catch (Exception e) { /* Ignored */ }
-            try { conn.close(); } catch (Exception e) { /* Ignored */ }
-        }
+    public static CompletableFuture<ResultSet> executeQuery(Connection connection, String query) {
+        return CompletableFuture.supplyAsync(() -> {
+            Connection conn = null;
+            PreparedStatement ps = null;
+            ResultSet rs = null;
 
-        return rs;
+            try{
+                ps = connection.prepareStatement(query);
+                if (query.toLowerCase().startsWith("select")) {
+                    rs = ps.executeQuery();
+                } else {
+                    ps.executeUpdate();
+                }
+            } catch (Exception e) {
+                ShopPlugin.getDiscordWebhook().sendError(Map.of("Query", query, "Message", e.getMessage()));
+                Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).reduce("", (s1, s2) -> s1 + s2 + "\n"));
+                e.printStackTrace();
+            } finally {
+//                try { rs.close(); } catch (Exception e) { /* Ignored */ }
+//                try { ps.close(); } catch (Exception e) { /* Ignored */ }
+//                try { conn.close(); } catch (Exception e) { /* Ignored */ }//TODO
+            }
+            return rs;
+        });
     }
 }
