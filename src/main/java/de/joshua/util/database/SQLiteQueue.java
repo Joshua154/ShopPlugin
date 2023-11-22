@@ -1,57 +1,67 @@
-//package de.joshua.util.database;
-//
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.PreparedStatement;
-//import java.sql.SQLException;
-//import java.util.LinkedList;
-//import java.util.Queue;
-//
-//public class SQLiteQueue {
-//    private static final String DATABASE_URL = "jdbc:sqlite:/path/to/your/database.db";
-//
-//    private Queue<String> operationQueue;
-//    private Connection connection;
-//
-//    public SQLiteQueue() {
-//        operationQueue = new LinkedList<>();
-//        initializeDatabase();
-//    }
-//
-//    private void initializeDatabase() {
-//        try {
-//            connection = DriverManager.getConnection(DATABASE_URL);
-//            connection.createStatement().executeUpdate(CREATE_TABLE_QUERY);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void enqueueOperation(String data) {
-//        operationQueue.offer(data);
-//        executeNextOperation();
-//    }
-//
-//    private void executeNextOperation() {
-//        if (!operationQueue.isEmpty()) {
-//            String data = operationQueue.peek();
-//            try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
-//                preparedStatement.setString(1, data);
-//                preparedStatement.executeUpdate();
-//                operationQueue.poll(); // Remove the operation from the queue after successful execution
-//                executeNextOperation(); // Continue with the next operation
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-//
-//    public void dequeueOperation() {
-//        try (PreparedStatement preparedStatement = connection.prepareStatement(DELETE_QUERY)) {
-//            preparedStatement.executeUpdate();
-//            executeNextOperation(); // Continue with the next operation
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}
+package de.joshua.util.database;
+
+import de.joshua.ShopPlugin;
+import it.unimi.dsi.fastutil.Pair;
+import org.bukkit.Bukkit;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.CompletableFuture;
+
+public class SQLiteQueue {
+    private static final String DATABASE_URL = "jdbc:sqlite:/path/to/your/database.db";
+    ShopPlugin shopPlugin;
+    private Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
+    private Connection connection;
+
+    public SQLiteQueue(ShopPlugin shopPlugin) {
+        operationQueue = new LinkedList<>();
+        this.shopPlugin = shopPlugin;
+
+        establishDatabaseConnection();
+        initializeDatabase();
+    }
+
+    private void initializeDatabase() {
+        try {
+            connection = DriverManager.getConnection(DATABASE_URL);
+            String createTableQuery = ""; //TODO: Add table query
+            enqueueOperation(createTableQuery);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public CompletableFuture<ResultSet> enqueueOperation(String data) {
+        CompletableFuture<ResultSet> future = new CompletableFuture<>();
+        operationQueue.offer(Pair.of(data, future));
+        shopPlugin.getServer().getScheduler().runTaskAsynchronously(shopPlugin, this::executeNextOperation);
+        return future;
+    }
+
+    private void executeNextOperation() {
+        if (!operationQueue.isEmpty()) {
+            Pair<String, CompletableFuture<ResultSet>> operation = operationQueue.peek();
+            String data = operation.left();
+            ResultSet resultSet = DataBaseUtil.executeQuery(connection, data);
+            operation.right().complete(resultSet);
+            operationQueue.remove();
+        }
+    }
+
+    public void establishDatabaseConnection() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            this.connection = DriverManager.getConnection("jdbc:sqlite:plugins/" + shopPlugin.getDataFolder().getName() + "/database.db");
+        } catch (SQLException | ClassNotFoundException e) {
+            shopPlugin.getLogger().warning("Failed to connect to database");
+            shopPlugin.getLogger().warning(e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(shopPlugin);
+        }
+    }
+}

@@ -5,26 +5,23 @@ import de.joshua.commands.OppenBuyCommand;
 import de.joshua.commands.RunSQLCommand;
 import de.joshua.commands.ShopCommand;
 import de.joshua.util.DiscordWebhook;
+import de.joshua.util.database.SQLiteQueue;
 import de.joshua.util.ui.GUIEH;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 public final class ShopPlugin extends JavaPlugin {
     public static UUID[] SQL_UUIDS;
-    private Connection databaseConnection;
+    private SQLiteQueue sqlQueue;
     private static ShopPlugin instance;
 
     public static void sendMessage(Component component, Player... players) {
@@ -42,6 +39,7 @@ public final class ShopPlugin extends JavaPlugin {
     public void onLoad() {
         instance = this;
         this.saveDefaultConfig();
+        this.sqlQueue = new SQLiteQueue(this);
 
         SQL_UUIDS = getConfig().getStringList("shop.sql.uuids").stream().map(UUID::fromString).toArray(UUID[]::new);
     }
@@ -49,7 +47,6 @@ public final class ShopPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         getDataFolder().mkdir();
-        establishDatabaseConnection();
         registerEvents();
         registerCommands();
     }
@@ -70,18 +67,8 @@ public final class ShopPlugin extends JavaPlugin {
 //        Objects.requireNonNull(getCommand("offers")).setExecutor(new SeeOffersCommand(this));
     }
 
-    private void establishDatabaseConnection() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            this.databaseConnection = DriverManager.getConnection("jdbc:sqlite:plugins/" + getDataFolder().getName() + "/database.db");
-        } catch (SQLException | ClassNotFoundException e) {
-            getLogger().warning("Failed to connect to database");
-            getLogger().warning(e.getMessage());
-        }
-    }
-
-    public Connection getDatabaseConnection() {
-        return databaseConnection;
+    public SQLiteQueue getSQLQueue() {
+        return sqlQueue;
     }
 
     public static DiscordWebhook getDiscordWebhook() {
@@ -91,19 +78,17 @@ public final class ShopPlugin extends JavaPlugin {
     public static ShopPlugin getInstance() {
         return instance;
     }
+
     public static FileConfiguration getFileConfig() {
         return instance.getConfig();
     }
+
     @NotNull
-    public static String getConfigString(String key){
-        return getFileConfig().getString(key) == null ?
-                "Err" :
-                Objects.requireNonNull(getFileConfig().getString(key));
+    public static String getConfigString(String key) {
+        return getFileConfig().getString(key) == null ? "Err" : Objects.requireNonNull(getFileConfig().getString(key));
     }
 
     public static List<String> getConfigStringList(String key) {
-        return getFileConfig().getString(key) == null ?
-                List.of("Err") :
-                Objects.requireNonNull(getFileConfig().getStringList(key));
+        return getFileConfig().getString(key) == null ? List.of("Err") : Objects.requireNonNull(getFileConfig().getStringList(key));
     }
 }

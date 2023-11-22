@@ -22,6 +22,8 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,50 +53,49 @@ public class RunSQLCommand implements CommandExecutor {
             }
         }
 
-        Pair<ResultSet, PreparedStatement> result = DataBaseUtil.executeQuery(shopPlugin.getDatabaseConnection(), String.join(" ", args));
-        ResultSet resultSet = result.getLeft();
-        PreparedStatement preparedStatement = result.getRight();
+        CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(String.join(" ", args));
 
-        List<String> rows = new ArrayList<>();
+        future.thenAcceptAsync(resultSet -> {
+            List<String> rows = new ArrayList<>();
 
-        try {
-            ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
-            final int columnCount = resultSetMetaData.getColumnCount();
+            try {
+                if (resultSet == null)
+                    rows.add("SUCCESS");
+                else {
+                    ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
+                    final int columnCount = resultSetMetaData.getColumnCount();
 
-            while (resultSet.next()) {
-                try {
-                    StringBuilder row = new StringBuilder();
-                    //Object[] values = new Object[columnCount];
-                    for (int i = 1; i <= columnCount; i++) {
-                        if (i > 1) row.append(",  ");
-                        String columnValue = resultSet.getString(i);
-                        row
-                                .append(resultSetMetaData.getColumnName(i))
-                                .append(": ")
-                                .append("<click:copy_to_clipboard:").append(columnValue).append(">")
-                                .append(columnValue)
-                                .append("</click>");
-                        //values[i - 1] = resultSet.getObject(i);
+                    while (resultSet.next()) {
+                        try {
+                            StringBuilder row = new StringBuilder();
+                            //Object[] values = new Object[columnCount];
+                            for (int i = 1; i <= columnCount; i++) {
+                                if (i > 1) row.append(",  ");
+                                String columnValue = resultSet.getString(i);
+                                row
+                                        .append(resultSetMetaData.getColumnName(i))
+                                        .append(": ")
+                                        .append("<click:copy_to_clipboard:").append(columnValue).append(">")
+                                        .append(columnValue)
+                                        .append("</click>");
+                                //values[i - 1] = resultSet.getObject(i);
+                            }
+
+
+                            rows.add(row.toString());
+                        } catch (Exception e) {
+                            ShopPlugin.sendMessage(Component.text("WARN: " + e.getCause()), player);
+                        }
                     }
-
-
-                    rows.add(row.toString());
-                } catch (Exception e) {
-                    ShopPlugin.sendMessage(Component.text("WARN: " + e.getCause()), player);
                 }
+            } catch (Exception e) {
+                ShopPlugin.sendMessage(Component.text("ERROR: " + e.getCause()), player);
             }
-            if (preparedStatement != null)
-                preparedStatement.close();
-            else
-                rows.add("SUCCESS");
-        } catch (Exception e) {
-            ShopPlugin.sendMessage(Component.text("ERROR: " + e.getCause()), player);
-        }
 
-        for (String row : rows) {
-            ShopPlugin.sendMessage(MiniMessage.miniMessage().deserialize(row), player);
-        }
-
+            for (String row : rows) {
+                ShopPlugin.sendMessage(MiniMessage.miniMessage().deserialize(row), player);
+            }
+        });
         return true;
     }
 

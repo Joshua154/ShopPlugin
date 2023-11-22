@@ -76,7 +76,7 @@ public class StoredItemsGUI extends PageGUI {
 
         ShopUtil.addItemToInventory(player, sIDB.item());
 
-        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.removeStoredItem(shopPlugin.getDatabaseConnection(), sIDB.dbID()));
+        Bukkit.getScheduler().runTaskAsynchronously(shopPlugin, () -> ShopDataBaseUtil.removeStoredItem(shopPlugin, sIDB.dbID()));
 
         db_items.remove(sIDB);
         updateCachedContent();
@@ -94,7 +94,7 @@ public class StoredItemsGUI extends PageGUI {
     }
 
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getStoredItems(shopPlugin.getDatabaseConnection(), super.player.getUniqueId());
+        db_items = ShopDataBaseUtil.getStoredItems(shopPlugin, super.player.getUniqueId());
     }
 
     @Override

@@ -123,7 +123,7 @@ public class ShopGUI extends PageGUI {
     }
 
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getForSellItems(shopPlugin.getDatabaseConnection());
+        db_items = ShopDataBaseUtil.getForSellItems(shopPlugin);
     }
 }
 

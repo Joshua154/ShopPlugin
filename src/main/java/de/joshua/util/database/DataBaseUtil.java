@@ -4,6 +4,7 @@ import de.joshua.ShopPlugin;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -71,20 +72,25 @@ public class DataBaseUtil {
         return "DELETE FROM " + tableName + " WHERE " + where + ";";
     }
 
-    public static Pair<ResultSet, PreparedStatement> executeQuery(Connection connection, String query) {
-        try {
-            PreparedStatement statement = connection.prepareStatement(query);
-            if (query.toLowerCase().startsWith("select")) {
-                ResultSet rs = statement.executeQuery();
-                return Pair.of(rs, statement);
-            } else {
-                statement.executeUpdate();
-                statement.close();
-            }
+    @Nullable
+    public static ResultSet executeQuery(Connection connection, String query) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try{
+            ps = connection.prepareStatement(query);
+            ps.executeUpdate();
+            rs = ps.executeQuery();
         } catch (Exception e) {
             ShopPlugin.getDiscordWebhook().sendError(Map.of("Query", query, "Message", e.getMessage()));
             Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.toString(e.getStackTrace()));
+        } finally {
+            try { rs.close(); } catch (Exception e) { /* Ignored */ }
+            try { ps.close(); } catch (Exception e) { /* Ignored */ }
+            try { conn.close(); } catch (Exception e) { /* Ignored */ }
         }
-        return Pair.of(null, null);
+
+        return rs;
     }
 }
