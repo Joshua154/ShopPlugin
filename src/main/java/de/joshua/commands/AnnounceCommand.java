@@ -11,10 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class AnnouceCommand implements CommandExecutor {
+public class AnnounceCommand implements CommandExecutor {
     ShopPlugin shopPlugin;
 
-    public AnnouceCommand(ShopPlugin shopPlugin) {
+    public AnnounceCommand(ShopPlugin shopPlugin) {
         this.shopPlugin = shopPlugin;
     }
 

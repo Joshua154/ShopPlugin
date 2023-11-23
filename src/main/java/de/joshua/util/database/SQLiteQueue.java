@@ -13,14 +13,12 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
-
 public class SQLiteQueue {
     private static List<String> DATABASE_TABLES = null;
     ShopPlugin shopPlugin;
     private final Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
     private Connection connection;
-    private boolean isProcessing = false;
+    private final boolean isProcessing = false;
 
     public SQLiteQueue(ShopPlugin shopPlugin) {
         operationQueue = new LinkedList<>();

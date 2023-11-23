@@ -1,7 +1,7 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
-import de.joshua.commands.AnnouceCommand;
+import de.joshua.commands.AnnounceCommand;
 import de.joshua.uis.offers.MakeOfferGUI;
 import de.joshua.util.ShopUtil;
 import de.joshua.util.database.ShopDataBaseUtil;
@@ -65,7 +65,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void handleAnnounce() {
-        AnnouceCommand.sendAnnouncement(String.valueOf(this.item.dbID()), this.player.displayName());
+        AnnounceCommand.sendAnnouncement(String.valueOf(this.item.dbID()), this.player.displayName());
     }
 
     private void makePurchase() {

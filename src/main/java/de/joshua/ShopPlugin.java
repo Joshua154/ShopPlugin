@@ -1,6 +1,6 @@
 package de.joshua;
 
-import de.joshua.commands.AnnouceCommand;
+import de.joshua.commands.AnnounceCommand;
 import de.joshua.commands.OppenBuyCommand;
 import de.joshua.commands.RunSQLCommand;
 import de.joshua.commands.ShopCommand;
@@ -62,7 +62,7 @@ public final class ShopPlugin extends JavaPlugin {
         Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
 //        Objects.requireNonNull(getCommand("stored")).setExecutor(new StoredCommand(this));
         Objects.requireNonNull(getCommand("open")).setExecutor(new OppenBuyCommand(this));
-        Objects.requireNonNull(getCommand("announce")).setExecutor(new AnnouceCommand(this));
+        Objects.requireNonNull(getCommand("announce")).setExecutor(new AnnounceCommand(this));
         Objects.requireNonNull(getCommand("executeSQL")).setExecutor(new RunSQLCommand(this));
 //        Objects.requireNonNull(getCommand("offers")).setExecutor(new SeeOffersCommand(this));
     }

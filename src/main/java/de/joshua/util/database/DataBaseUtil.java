@@ -74,7 +74,7 @@ public class DataBaseUtil {
     public static CompletableFuture<ResultSet> executeQuery(Connection connection, String query) {
         return CompletableFuture.supplyAsync(() -> {
             Connection conn = null;
-            PreparedStatement ps = null;
+            PreparedStatement ps;
             ResultSet rs = null;
 
             try{
@@ -88,10 +88,6 @@ public class DataBaseUtil {
                 ShopPlugin.getDiscordWebhook().sendError(Map.of("Query", query, "Message", e.getMessage()));
                 Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).reduce("", (s1, s2) -> s1 + s2 + "\n"));
                 e.printStackTrace();
-            } finally {
-//                try { rs.close(); } catch (Exception e) { /* Ignored */ }
-//                try { ps.close(); } catch (Exception e) { /* Ignored */ }
-//                try { conn.close(); } catch (Exception e) { /* Ignored */ }//TODO
             }
             return rs;
         });
