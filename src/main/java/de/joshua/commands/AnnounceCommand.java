@@ -11,10 +11,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class AnnouceCommand implements CommandExecutor {
+public class AnnounceCommand implements CommandExecutor {
     ShopPlugin shopPlugin;
 
-    public AnnouceCommand(ShopPlugin shopPlugin) {
+    public AnnounceCommand(ShopPlugin shopPlugin) {
         this.shopPlugin = shopPlugin;
     }
 
@@ -22,7 +22,7 @@ public class AnnouceCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
         if (args.length != 1) {
-            ShopPlugin.sendMessage(Component.text("Invalid Arguments"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.invalidArgs")), player);
             return false;
         }
         sendAnnouncement(args[0], player.displayName());
@@ -33,7 +33,7 @@ public class AnnouceCommand implements CommandExecutor {
     public static void sendAnnouncement(String itemID, Component playerName) {
         ShopPlugin.sendMessage(
                 MiniMessage.miniMessage().deserialize(
-                        "<click:run_command:/open <item_id>>Click here to check this item out of <player_name>",
+                        ShopPlugin.getConfigString("shop.command.announce"),
                         Placeholder.component("player_name", playerName),
                         Placeholder.parsed("item_id", itemID)
                 ),

@@ -1,5 +1,6 @@
 package de.joshua.util.ui;
 
+import de.joshua.ShopPlugin;
 import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -14,7 +15,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -106,6 +106,7 @@ public abstract class PageGUI implements IGUI {
     public void refresh() {
         List<ItemStack> itemsOnPage = getItemsFromPage(this.page);
         inventory.clear();
+
         for (int i = 0; i < itemsPerPage + 1; i++) {
             if (i < itemsOnPage.size()) {
                 inventory.setItem(i, itemsOnPage.get(i));
@@ -118,14 +119,14 @@ public abstract class PageGUI implements IGUI {
                     .build());
         }
         if (getPage() != 0) {
-            inventory.setItem(5 * 9 + 1, new ItemBuilder(Material.ARROW)
-                    .displayName(Component.text("Back"))
+            inventory.setItem(5 * 9 + 0, new ItemBuilder(Material.ARROW)
+                    .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.previous")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
                     .build());
         }
         if (getPage() + 1 < getPageCount()) {
-            inventory.setItem(5 * 9 + 7, new ItemBuilder(Material.ARROW)
-                    .displayName(Component.text("Further"))
+            inventory.setItem(5 * 9 + 8, new ItemBuilder(Material.ARROW)
+                    .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.next")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "further")
                     .build());
         }

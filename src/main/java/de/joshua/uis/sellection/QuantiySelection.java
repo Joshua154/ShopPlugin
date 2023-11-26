@@ -17,12 +17,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class QuantiySelection extends PageGUI {
-    private final String title = "Select Quantity";
     ShopPlugin shopPlugin;
     SellGUI sellGUI;
 
     public QuantiySelection(ShopPlugin shopPlugin, Player player, SellGUI gui) {
-        super(Component.text("Select Quantity"));
+        super(Component.text(ShopPlugin.getConfigString("shop.selection.quantity.gui.display.buyItem")));
         super.player = player;
         this.shopPlugin = shopPlugin;
         this.sellGUI = gui;
@@ -37,7 +36,7 @@ public class QuantiySelection extends PageGUI {
     @Override
     public List<ItemStack> getContent() {
         List<Integer> quantities = new ArrayList<>();
-        for (int i = 1; i <= 64; i++) {
+        for (int i = 1; i <= 64*4; i++) {
             quantities.add(i);
         }
 
@@ -45,7 +44,7 @@ public class QuantiySelection extends PageGUI {
                 .map(n ->
                         new ItemBuilder(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
                                 .amount(n)
-                                .displayName(Component.text(toCamelCase(n.toString())))
+                                .displayName(Component.text(n.toString()))
                                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "quantity_selection")
                                 .persistentData(getPageGUIKey("item_quantity"), PersistentDataType.INTEGER, n)
                                 .build()
@@ -61,7 +60,7 @@ public class QuantiySelection extends PageGUI {
         if (!Objects.equals(event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING), "quantity_selection"))
             return;
 
-        sellGUI.setQuantity(event.getCurrentItem().getAmount());
+        sellGUI.setQuantity(getItemQuantity(event.getCurrentItem()));
         sellGUI.open();
     }
 
@@ -70,11 +69,7 @@ public class QuantiySelection extends PageGUI {
 
     }
 
-    private String toCamelCase(String s) {
-        return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
-    }
-
-    private Integer getItemName(ItemStack itemStack) {
+    private Integer getItemQuantity(ItemStack itemStack) {
         return itemStack.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("item_quantity"), PersistentDataType.INTEGER);
     }
 }

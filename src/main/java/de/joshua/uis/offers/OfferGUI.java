@@ -1,8 +1,8 @@
 package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.OfferItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -58,23 +58,25 @@ public class OfferGUI implements IGUI {
     private void handleDenyOffer() {
         ShopPlugin.sendMessage(Component.text("Offer Removed"), player);
 
-        ShopDataBaseUtil.removeOffer(shopPlugin.getDatabaseConnection(), offer.dbID());
-        ShopDataBaseUtil.addStoredItem(shopPlugin.getDatabaseConnection(), offer.offer(), offer.seller(), offer.offeredBy(), -1);
+        ShopDataBaseUtil.removeOffer(shopPlugin, offer.dbID());
+        ShopDataBaseUtil.addStoredItem(shopPlugin, offer.offer(), offer.seller(), offer.offeredBy(), -1);
 
         player.closeInventory();
     }
 
     private void handleConfirmOffer() {
-        if (offer.sellItem().isNotAvailable(shopPlugin.getDatabaseConnection())) {
-            ShopPlugin.sendMessage(Component.text("This item is already sold"), player);
+        if (offer.sellItem().isNotAvailable(shopPlugin)) {
+            String msg = ShopPlugin.getConfigString("shop.error.itemSold");
+            ShopPlugin.sendMessage(Component.text(msg), player);
             player.closeInventory();
             return;
         }
 
-        ShopPlugin.sendMessage(Component.text("Item sold"), player);
+        String msg = ShopPlugin.getConfigString("shop.offers.accept");
+        ShopPlugin.sendMessage(Component.text(msg), player);
         ShopUtil.addItemToInventory(player, offer.offer());
         player.closeInventory();
-        ShopDataBaseUtil.buyItemWithOffer(shopPlugin.getDatabaseConnection(), offer);
+        ShopDataBaseUtil.buyItemWithOffer(shopPlugin, offer);
     }
 
     @Override
@@ -94,7 +96,15 @@ public class OfferGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Offer"));
+        String title = ShopPlugin.getConfigString("shop.offers.gui.name");
+        String buyItem = ShopPlugin.getConfigString("shop.offers.gui.display.buyItem");
+        String offeredItem = ShopPlugin.getConfigString("shop.offers.gui.display.offeredItem");
+        String confirm = ShopPlugin.getConfigString("shop.offers.gui.button.confirm");
+        String cancel = ShopPlugin.getConfigString("shop.offers.gui.button.cancel");
+        String deny = ShopPlugin.getConfigString("shop.offers.gui.button.deny");
+
+
+        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text(title));
 
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
@@ -104,13 +114,13 @@ public class OfferGUI implements IGUI {
         }
 
         inventory.setItem(9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Item to Buy"))
+                .displayName(Component.text(buyItem))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 2, offer.sellItem().item());
 
         inventory.setItem(9 + 9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Offered Price"))
+                .displayName(Component.text(offeredItem))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 9 + 2, offer.offer());
@@ -118,19 +128,19 @@ public class OfferGUI implements IGUI {
 
         if (!offer.offer().getType().equals(Material.AIR)) {
             inventory.setItem(9 + 9 + 6, new ItemBuilder(Material.LIME_CONCRETE)
-                    .displayName(Component.text("Accept Offer"))
+                    .displayName(Component.text(confirm))
                     .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                     .persistentData(getGUIKey("type"), PersistentDataType.STRING, "confirm")
                     .build());
         }
         inventory.setItem(9 + 9 + 7, new ItemBuilder(Material.RED_CONCRETE)
-                .displayName(Component.text("Cancel"))
+                .displayName(Component.text(cancel))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "cancel")
                 .build());
         if (this.player.getUniqueId().equals(offer.seller())) {
             inventory.setItem(9 + 9 + 8, new ItemBuilder(Material.BARRIER)
-                    .displayName(Component.text("Denny Offer"))
+                    .displayName(Component.text(deny))
                     .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                     .persistentData(getGUIKey("type"), PersistentDataType.STRING, "deny")
                     .build());

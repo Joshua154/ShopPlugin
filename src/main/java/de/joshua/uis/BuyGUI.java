@@ -1,10 +1,10 @@
 package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
-import de.joshua.commands.AnnouceCommand;
+import de.joshua.commands.AnnounceCommand;
 import de.joshua.uis.offers.MakeOfferGUI;
-import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -55,7 +55,7 @@ public class BuyGUI implements IGUI {
                 case "offer" -> handlePriceOffer();
                 case "cancel" -> handleCancel();
                 case "remove" -> handleRemove();
-                case "annouce" -> handleAnnounce();
+                case "announce" -> handleAnnounce();
             }
         }
     }
@@ -65,12 +65,12 @@ public class BuyGUI implements IGUI {
     }
 
     private void handleAnnounce() {
-        AnnouceCommand.sendAnnouncement(String.valueOf(this.item.dbID()), this.player.displayName());
+        AnnounceCommand.sendAnnouncement(String.valueOf(this.item.dbID()), this.player.displayName());
     }
 
     private void makePurchase() {
-        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
-            ShopPlugin.sendMessage(Component.text("This item is no longer available"), player);
+        if (item.isNotAvailable(shopPlugin)) {
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.itemUnavailable")), player);
             player.closeInventory();
             return;
         }
@@ -91,15 +91,15 @@ public class BuyGUI implements IGUI {
             }
         }
         if (hasBought) {
-            ShopPlugin.sendMessage(Component.text("Item bought"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.buy.success")), player);
 
             ShopUtil.addItemToInventory(player, item.item());
 
             player.closeInventory();
-            ShopDataBaseUtil.buyItem(shopPlugin.getDatabaseConnection(), item, player);
+            ShopDataBaseUtil.buyItem(shopPlugin, item, player);
             return;
         } else {
-            ShopPlugin.sendMessage(Component.text("You can't afford this item"), player);
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.buy.notAffordable")), player);
         }
 
         player.closeInventory();
@@ -120,15 +120,15 @@ public class BuyGUI implements IGUI {
     }
 
     private void handleRemove() {
-        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
-            ShopPlugin.sendMessage(Component.text("This item is already sold"), player);
+        if (item.isNotAvailable(shopPlugin)) {
+            ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.itemSold")), player);
             player.closeInventory();
             return;
         }
 
-        ShopPlugin.sendMessage(Component.text("Item Removed"), player);
+        ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.buy.removed")), player);
 
-        ShopDataBaseUtil.removeItem(shopPlugin.getDatabaseConnection(), item);
+        ShopDataBaseUtil.removeItem(shopPlugin, item);
         ShopUtil.addItemToInventory(player, item.item());
 
         player.closeInventory();
@@ -151,7 +151,17 @@ public class BuyGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Buy"));
+        String title = ShopPlugin.getConfigString("shop.buy.gui.name");
+        String buyItem = ShopPlugin.getConfigString("shop.buy.gui.display.buyItem");
+        String price = ShopPlugin.getConfigString("shop.buy.gui.display.price");
+        String confirm = ShopPlugin.getConfigString("shop.buy.gui.button.confirm");
+        String priceOffer = ShopPlugin.getConfigString("shop.buy.gui.button.sendOffer");
+        String cancel = ShopPlugin.getConfigString("shop.buy.gui.button.cancel");
+        String remove = ShopPlugin.getConfigString("shop.buy.gui.button.remove");
+        String announce = ShopPlugin.getConfigString("shop.buy.gui.button.announce");
+
+
+        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text(title));
 
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
@@ -161,13 +171,13 @@ public class BuyGUI implements IGUI {
         }
 
         inventory.setItem(9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Item to Buy"))
+                .displayName(Component.text(buyItem))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 2, item.item());
 
         inventory.setItem(9 + 9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Price"))
+                .displayName(Component.text(price))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 9 + 2, item.price());
@@ -175,33 +185,33 @@ public class BuyGUI implements IGUI {
 
         if (!item.price().getType().equals(Material.AIR)) {
             inventory.setItem(9 + 9 + 5, new ItemBuilder(Material.LIME_CONCRETE)
-                    .displayName(Component.text("Confirm Purchase"))
+                    .displayName(Component.text(confirm))
                     .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                     .persistentData(getGUIKey("type"), PersistentDataType.STRING, "confirm")
                     .build());
         }
         inventory.setItem(9 + 9 + 6, new ItemBuilder(Material.ORANGE_CONCRETE)
-                .displayName(Component.text("Send Price Offer"))
+                .displayName(Component.text(priceOffer))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "offer")
                 .build());
         inventory.setItem(9 + 9 + 7, new ItemBuilder(Material.RED_CONCRETE)
-                .displayName(Component.text("Cancel"))
+                .displayName(Component.text(cancel))
                 .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "cancel")
                 .build());
         if (this.player.getUniqueId().equals(item.seller())) {
             inventory.setItem(9 + 9 + 8, new ItemBuilder(Material.BARRIER)
-                    .displayName(Component.text("Remove"))
+                    .displayName(Component.text(remove))
                     .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
                     .persistentData(getGUIKey("type"), PersistentDataType.STRING, "remove")
                     .build());
         }
         if (this.player.getUniqueId().equals(item.seller()) && this.player.hasPermission("shopplugin.announce")) {
             inventory.setItem(9 + 8, new ItemBuilder(Material.GOAT_HORN)
-                    .displayName(Component.text("Annouce"))
+                    .displayName(Component.text(announce))
                     .persistentData(getGUIKey("buy_gui"), PersistentDataType.STRING, "button")
-                    .persistentData(getGUIKey("type"), PersistentDataType.STRING, "annouce")
+                    .persistentData(getGUIKey("type"), PersistentDataType.STRING, "announce")
                     .build());
         }
 

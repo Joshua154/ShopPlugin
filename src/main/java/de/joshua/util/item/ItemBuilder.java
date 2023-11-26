@@ -34,7 +34,6 @@ public class ItemBuilder implements ItemStackBuilder<ItemBuilder> {
     public ItemBuilder(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.meta = this.itemStack.getItemMeta();
-
     }
 
     @Override

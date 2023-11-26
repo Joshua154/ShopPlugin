@@ -18,12 +18,11 @@ import java.util.List;
 import java.util.Objects;
 
 public class ItemSelection extends PageGUI {
-    private final String title = "Select Item";
     ShopPlugin shopPlugin;
     SellGUI sellGUI;
 
     public ItemSelection(ShopPlugin shopPlugin, Player player, SellGUI gui) {
-        super(Component.text("Select Item"));
+        super(Component.text(ShopPlugin.getConfigString("shop.selection.item.gui.display.buyItem")));
         super.player = player;
         this.shopPlugin = shopPlugin;
         this.sellGUI = gui;
@@ -40,7 +39,6 @@ public class ItemSelection extends PageGUI {
         return getMaterials().stream()
                 .map(m ->
                         new ItemBuilder(m)
-                                .displayName(Component.text(toCamelCase(m.name().replaceAll("_", " "))))
                                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "item_selection")
                                 .persistentData(getPageGUIKey("item_name"), PersistentDataType.STRING, m.name())
                                 .build()
@@ -70,6 +68,7 @@ public class ItemSelection extends PageGUI {
     @Override
     public void onPageSwitch() {
         List<ItemStack> itemsFromPage = getItemsFromPage(getPage());
+        String title = ShopPlugin.getConfigString("shop.selection.item.gui.display.buyItem");
         guiTitle = Component.text(title + ": " + getItemName(itemsFromPage.get(0)).toUpperCase().charAt(0) + " - " + getItemName(itemsFromPage.get(itemsFromPage.size() - 1)).toUpperCase().charAt(0));
     }
 

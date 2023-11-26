@@ -1,8 +1,8 @@
 package de.joshua.uis.offers;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.ShopDataBaseUtil;
 import de.joshua.util.ShopUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.IGUI;
@@ -58,8 +58,9 @@ public class MakeOfferGUI implements IGUI {
     }
 
     private void offerPrice(ItemStack offeredItem) {
-        if (item.isNotAvailable(shopPlugin.getDatabaseConnection())) {
-            ShopPlugin.sendMessage(Component.text("This item is no longer available"), player);
+        if (item.isNotAvailable(shopPlugin)) {
+            String msg = ShopPlugin.getConfigString("shop.error.itemSold");
+            ShopPlugin.sendMessage(Component.text(msg), player);
             player.closeInventory();
             return;
         }
@@ -69,10 +70,12 @@ public class MakeOfferGUI implements IGUI {
         inventory.setItem(priceSlot, new ItemBuilder().build());
         player.closeInventory();
         if (validOffer) {
-            ShopDataBaseUtil.addOffer(shopPlugin.getDatabaseConnection(), player, item, offeredItem);
-            ShopPlugin.sendMessage(Component.text("Offer send"), player);
+            ShopDataBaseUtil.addOffer(shopPlugin, player, item, offeredItem);
+            String msg = ShopPlugin.getConfigString("shop.makeOffer.success");
+            ShopPlugin.sendMessage(Component.text(msg), player);
         } else {
-            ShopPlugin.sendMessage(Component.text("Not a valid Offer"), player);
+            String msg = ShopPlugin.getConfigString("shop.makeOffer.invalid");
+            ShopPlugin.sendMessage(Component.text(msg), player);
         }
     }
 
@@ -98,7 +101,14 @@ public class MakeOfferGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text("Sell"));
+        String title = ShopPlugin.getConfigString("shop.makeOffer.gui.name");
+        String buyItem = ShopPlugin.getConfigString("shop.makeOffer.gui.display.buyItem");
+        String offeredItem = ShopPlugin.getConfigString("shop.makeOffer.gui.display.offeredItem");
+        String confirm = ShopPlugin.getConfigString("shop.makeOffer.gui.button.confirm");
+        String cancel = ShopPlugin.getConfigString("shop.makeOffer.gui.button.cancel");
+
+
+        Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text(title));
 
         for (int i = 0; i < inventory.getSize(); i++) {
             inventory.setItem(i, new ItemBuilder(Material.BLACK_STAINED_GLASS_PANE)
@@ -108,7 +118,7 @@ public class MakeOfferGUI implements IGUI {
         }
 
         inventory.setItem(9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Item to Buy"))
+                .displayName(Component.text(buyItem))
                 .persistentData(getGUIKey("make_offer_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 2, new ItemBuilder(item.item())
@@ -116,19 +126,19 @@ public class MakeOfferGUI implements IGUI {
                 .build());
 
         inventory.setItem(9 + 9 + 1, new ItemBuilder(Material.PAPER)
-                .displayName(Component.text("Offered Price"))
+                .displayName(Component.text(offeredItem))
                 .persistentData(getGUIKey("make_offer_gui"), PersistentDataType.STRING, "property")
                 .build());
         inventory.setItem(9 + 9 + 2, new ItemBuilder().build());
 
 
         inventory.setItem(9 + 9 + 6, new ItemBuilder(Material.LIME_CONCRETE)
-                .displayName(Component.text("Confirm Offer"))
+                .displayName(Component.text(confirm))
                 .persistentData(getGUIKey("make_offer_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "confirm")
                 .build());
         inventory.setItem(9 + 9 + 7, new ItemBuilder(Material.RED_CONCRETE)
-                .displayName(Component.text("Cancel"))
+                .displayName(Component.text(cancel))
                 .persistentData(getGUIKey("make_offer_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getGUIKey("type"), PersistentDataType.STRING, "cancel")
                 .build());

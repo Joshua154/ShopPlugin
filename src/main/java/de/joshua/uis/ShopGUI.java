@@ -2,7 +2,7 @@ package de.joshua.uis;
 
 import de.joshua.ShopPlugin;
 import de.joshua.uis.offers.SeeOfferedItemsGUI;
-import de.joshua.util.ShopDataBaseUtil;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
@@ -18,47 +18,53 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class ShopGUI extends PageGUI {
     ShopPlugin shopPlugin;
     List<SellItemDataBase> db_items;
-
+    ShopCategory currentCategory = ShopCategory.getFirst();
+    int categorySlot = 9 * 5 + 2;
     public ShopGUI(ShopPlugin shopPlugin) {
-        super(Component.text("Shop"));
+        super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
         this.shopPlugin = shopPlugin;
         updateItems();
     }
 
     @Override
     public @NotNull Inventory getInventory() {
-        Inventory inventory = super.getInventory();
+        return setupButtons(super.getInventory());
+    }
 
-//        inventory.setItem(9 * 5 + 2, new ItemBuilder(Material.RED_CONCRETE)
-//                .displayName(Component.text("Cancel"))
-//                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
-//                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "")
-//                .build());
+    private Inventory setupButtons(Inventory inventory) {
+        String sell = ShopPlugin.getConfigString("shop.shop.gui.button.sell");
+        String offeredItems = ShopPlugin.getConfigString("shop.shop.gui.button.offeredItems");
+        String storedItems = ShopPlugin.getConfigString("shop.shop.gui.button.storedItems");
+
+        inventory.setItem(categorySlot, new ItemBuilder(currentCategory.displayItem())
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "category")
+                .build());
         inventory.setItem(9 * 5 + 3, new ItemBuilder(Material.EMERALD)
-                .displayName(Component.text("Sell"))
+                .displayName(Component.text(sell))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "sell")
                 .build());
         inventory.setItem(9 * 5 + 4, new ItemBuilder(Material.BUNDLE)
-                .displayName(Component.text("Trade Offers"))
+                .displayName(Component.text(offeredItems))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "offers")
                 .build());
         inventory.setItem(9 * 5 + 5, new ItemBuilder(Material.CHEST)
-                .displayName(Component.text("Stored Items"))
+                .displayName(Component.text(storedItems))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
                 .build());
-//        inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.RED_CONCRETE)
-//                .displayName(Component.text("Cancel"))
-//                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
-//                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "cancel")
-//                .build());
-
+        inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.COMPASS)
+                .displayName(Component.text("SEARCH"))
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
+                .build());
         return inventory;
     }
 
@@ -69,11 +75,12 @@ public class ShopGUI extends PageGUI {
 
     @Override
     public List<ItemStack> getContent() {
-        return db_items.stream().map(this::generateItem).toList();
+        return currentCategory.parseItems(db_items)
+                .stream().map(this::generateItem).toList();
     }
 
     private ItemStack generateItem(SellItemDataBase sellItemDataBase) {
-        return new ItemBuilder(sellItemDataBase.getPreviewItem())
+        return new ItemBuilder(sellItemDataBase.getPreviewItem(getPageGUIKey("item_id")))
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "purchasable")
                 .build();
     }
@@ -88,14 +95,20 @@ public class ShopGUI extends PageGUI {
         if (!clickedItem.hasItemMeta()) return;
         if (!clickedItem.getItemMeta().getPersistentDataContainer().has(getPageGUIKey("type"), PersistentDataType.STRING))
             return;
+
         switch (Objects.requireNonNull(clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("type"), PersistentDataType.STRING))) {
             case "purchasable" -> {
-                SellItemDataBase sellItemDataBase = db_items.get(slot);
+                if (!clickedItem.getItemMeta().getPersistentDataContainer().has(getPageGUIKey("item_id"), PersistentDataType.INTEGER))
+                    return;
+                Integer dbID = clickedItem.getItemMeta().getPersistentDataContainer().get(getPageGUIKey("item_id"), PersistentDataType.INTEGER);
+                SellItemDataBase sellItemDataBase = db_items.stream().filter(dbI -> dbI.dbID() == dbID).findFirst().orElse(null);
                 BuyGUI buyGUI = new BuyGUI(shopPlugin, sellItemDataBase, player);
                 buyGUI.open();
             }
             case "category" -> {
-
+                setNextCategory();
+                updateCachedContent();
+                refresh();
             }
             case "sell" -> {
                 SellGUI sellGUI = new SellGUI(shopPlugin, player);
@@ -118,8 +131,24 @@ public class ShopGUI extends PageGUI {
         updateCachedContent();
     }
 
+    @Override
+    public void refresh() {
+        super.refresh();
+        setupButtons(super.inventory);
+    }
+
     private void updateItems() {
-        db_items = ShopDataBaseUtil.getForSellItems(shopPlugin.getDatabaseConnection());
+        CompletableFuture<List<SellItemDataBase>> future = ShopDataBaseUtil.getForSellItems(shopPlugin);
+        db_items = future.join();
+    }
+
+    private void setNextCategory() {
+        ShopCategory next = currentCategory.next();
+        currentCategory = next;
+        inventory.setItem(categorySlot, new ItemBuilder(next.displayItem())
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "category")
+                .build());
     }
 }
 
