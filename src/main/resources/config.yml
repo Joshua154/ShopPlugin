@@ -68,6 +68,13 @@ shop.shop.gui.button.offeredItems: "Deine Angebote"
 shop.shop.gui.button.storedItems: "Gelagerte Items"
 
 
+shop.shop.categories.item.name: "Sortieren nach"
+shop.shop.categories.item.sell: "<gray>Kaufitem</gray>"
+shop.shop.categories.item.price: "<gray>Preis</gray>"
+shop.shop.categories.item.oldTnew: "<gray>Alt -> Neu</gray>"
+shop.shop.categories.item.newTold: "<gray>Neu -> Alt</gray>"
+
+
 shop.error.invalidArgs: "Ungültige Argumente"
 shop.error.itemUnavailable: "Dieses Item ist nicht verfügbar"
 shop.error.itemSold: "Dieses Item wurde bereits verkauft"

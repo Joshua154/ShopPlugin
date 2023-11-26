@@ -1,6 +1,7 @@
 package de.joshua.commands;
 
 import de.joshua.ShopPlugin;
+import de.joshua.util.database.DataBaseCollection;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
@@ -49,9 +50,10 @@ public class RunSQLCommand implements CommandExecutor {
             }
         }
 
-        CompletableFuture<ResultSet> future = shopPlugin.getSQLQueue().enqueueOperation(String.join(" ", args));
+        CompletableFuture<DataBaseCollection> future = shopPlugin.getSQLQueue().enqueueOperation(String.join(" ", args));
 
-        future.thenAcceptAsync(resultSet -> {
+        future.thenAcceptAsync(data -> {
+            ResultSet resultSet = data.resultSet();
             List<String> rows = new ArrayList<>();
 
             try {
@@ -91,6 +93,8 @@ public class RunSQLCommand implements CommandExecutor {
             for (String row : rows) {
                 ShopPlugin.sendMessage(MiniMessage.miniMessage().deserialize(row), player);
             }
+
+            data.close();
         });
         return true;
     }

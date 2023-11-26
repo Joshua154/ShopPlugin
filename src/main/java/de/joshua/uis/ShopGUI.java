@@ -23,7 +23,8 @@ import java.util.concurrent.CompletableFuture;
 public class ShopGUI extends PageGUI {
     ShopPlugin shopPlugin;
     List<SellItemDataBase> db_items;
-
+    ShopCategory currentCategory = ShopCategory.getFirst();
+    int categorySlot = 9 * 5 + 2;
     public ShopGUI(ShopPlugin shopPlugin) {
         super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
         this.shopPlugin = shopPlugin;
@@ -32,17 +33,18 @@ public class ShopGUI extends PageGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
+        return setupButtons(super.getInventory());
+    }
+
+    private Inventory setupButtons(Inventory inventory) {
         String sell = ShopPlugin.getConfigString("shop.shop.gui.button.sell");
         String offeredItems = ShopPlugin.getConfigString("shop.shop.gui.button.offeredItems");
         String storedItems = ShopPlugin.getConfigString("shop.shop.gui.button.storedItems");
 
-        Inventory inventory = super.getInventory();
-
-//        inventory.setItem(9 * 5 + 2, new ItemBuilder(Material.RED_CONCRETE)
-//                .displayName(Component.text("Cancel"))
-//                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
-//                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "")
-//                .build());
+        inventory.setItem(categorySlot, new ItemBuilder(currentCategory.displayItem())
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "category")
+                .build());
         inventory.setItem(9 * 5 + 3, new ItemBuilder(Material.EMERALD)
                 .displayName(Component.text(sell))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
@@ -58,12 +60,11 @@ public class ShopGUI extends PageGUI {
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
                 .build());
-//        inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.RED_CONCRETE)
-//                .displayName(Component.text("Cancel"))
-//                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
-//                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "cancel")
-//                .build());
-
+        inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.COMPASS)
+                .displayName(Component.text("SEARCH"))
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
+                .build());
         return inventory;
     }
 
@@ -74,7 +75,8 @@ public class ShopGUI extends PageGUI {
 
     @Override
     public List<ItemStack> getContent() {
-        return db_items.stream().map(this::generateItem).toList();
+        return currentCategory.parseItems(db_items)
+                .stream().map(this::generateItem).toList();
     }
 
     private ItemStack generateItem(SellItemDataBase sellItemDataBase) {
@@ -104,7 +106,9 @@ public class ShopGUI extends PageGUI {
                 buyGUI.open();
             }
             case "category" -> {
-
+                setNextCategory();
+                updateCachedContent();
+                refresh();
             }
             case "sell" -> {
                 SellGUI sellGUI = new SellGUI(shopPlugin, player);
@@ -127,9 +131,24 @@ public class ShopGUI extends PageGUI {
         updateCachedContent();
     }
 
+    @Override
+    public void refresh() {
+        super.refresh();
+        setupButtons(super.inventory);
+    }
+
     private void updateItems() {
         CompletableFuture<List<SellItemDataBase>> future = ShopDataBaseUtil.getForSellItems(shopPlugin);
         db_items = future.join();
+    }
+
+    private void setNextCategory() {
+        ShopCategory next = currentCategory.next();
+        currentCategory = next;
+        inventory.setItem(categorySlot, new ItemBuilder(next.displayItem())
+                .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "category")
+                .build());
     }
 }
 

@@ -71,10 +71,9 @@ public class DataBaseUtil {
     }
 
 
-    public static CompletableFuture<ResultSet> executeQuery(Connection connection, String query) {
+    public static CompletableFuture<DataBaseCollection> executeQuery(Connection connection, String query) {
         return CompletableFuture.supplyAsync(() -> {
-            Connection conn = null;
-            PreparedStatement ps;
+            PreparedStatement ps = null;
             ResultSet rs = null;
 
             try{
@@ -89,7 +88,7 @@ public class DataBaseUtil {
                 Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).reduce("", (s1, s2) -> s1 + s2 + "\n"));
                 e.printStackTrace();
             }
-            return rs;
+            return new DataBaseCollection(connection, ps, rs);
         });
     }
 }

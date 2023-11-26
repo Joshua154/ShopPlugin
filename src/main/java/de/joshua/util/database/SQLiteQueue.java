@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 public class SQLiteQueue {
     private static List<String> DATABASE_TABLES = null;
     ShopPlugin shopPlugin;
-    private final Queue<Pair<String, CompletableFuture<ResultSet>>> operationQueue;
+    private final Queue<Pair<String, CompletableFuture<DataBaseCollection>>> operationQueue;
     private Connection connection;
     private final boolean isProcessing = false;
 
@@ -35,10 +35,10 @@ public class SQLiteQueue {
     }
 
 
-    public synchronized CompletableFuture<ResultSet> enqueueOperation(String request) {
+    public synchronized CompletableFuture<DataBaseCollection> enqueueOperation(String request) {
         return CompletableFuture.supplyAsync(() -> {
-            CompletableFuture<ResultSet> future = new CompletableFuture<>();
-            Pair<String, CompletableFuture<ResultSet>> pair = Pair.of(request, future);
+            CompletableFuture<DataBaseCollection> future = new CompletableFuture<>();
+            Pair<String, CompletableFuture<DataBaseCollection>> pair = Pair.of(request, future);
             operationQueue.add(pair);
             if (!isProcessing) {
                 processQueue();
@@ -49,15 +49,16 @@ public class SQLiteQueue {
 
     private void processQueue() {
         while (!operationQueue.isEmpty()) {
-            Pair<String, CompletableFuture<ResultSet>> pair = operationQueue.poll();
+            Pair<String, CompletableFuture<DataBaseCollection>> pair = operationQueue.poll();
+            if(pair == null) continue;
             String operation = pair.left();
             System.out.println(operation);
-            CompletableFuture<ResultSet> future = pair.right();
+            CompletableFuture<DataBaseCollection> future = pair.right();
 
             establishDatabaseConnection();
-            ResultSet resultSet = DataBaseUtil.executeQuery(connection, operation).join();
+            DataBaseCollection dataBaseCollection = DataBaseUtil.executeQuery(connection, operation).join();
 
-            future.complete(resultSet);
+            future.complete(dataBaseCollection);
         }
     }
 

@@ -88,6 +88,11 @@ public final class ShopPlugin extends JavaPlugin {
         return getFileConfig().getString(key) == null ? "Err" : Objects.requireNonNull(getFileConfig().getString(key));
     }
 
+    @NotNull
+    public static Component getConfigStringParsed(String key) {
+        return MiniMessage.miniMessage().deserialize(getConfigString(key));
+    }
+
     public static List<String> getConfigStringList(String key) {
         return getFileConfig().getString(key) == null ? List.of("Err") : Objects.requireNonNull(getFileConfig().getStringList(key));
     }

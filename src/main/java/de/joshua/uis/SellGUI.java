@@ -101,7 +101,7 @@ public class SellGUI implements IGUI {
         String price = ShopPlugin.getConfigString("shop.sell.gui.display.customPrice");
         String confirm = ShopPlugin.getConfigString("shop.sell.gui.button.confirm");
         String cancel = ShopPlugin.getConfigString("shop.sell.gui.button.cancel");
-        String customPriceSelection = ShopPlugin.getConfigString("shop.sell.gui.button.customPriceSelection");
+        String customPriceSelection = ShopPlugin.getConfigString("shop.sell.gui.display.customPriceSelection");
 
 
         Inventory inventory = Bukkit.createInventory(this, 9 * 4, Component.text(title));

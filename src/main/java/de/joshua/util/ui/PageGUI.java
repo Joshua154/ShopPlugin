@@ -119,13 +119,13 @@ public abstract class PageGUI implements IGUI {
                     .build());
         }
         if (getPage() != 0) {
-            inventory.setItem(5 * 9 + 1, new ItemBuilder(Material.ARROW)
+            inventory.setItem(5 * 9 + 0, new ItemBuilder(Material.ARROW)
                     .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.previous")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
                     .build());
         }
         if (getPage() + 1 < getPageCount()) {
-            inventory.setItem(5 * 9 + 7, new ItemBuilder(Material.ARROW)
+            inventory.setItem(5 * 9 + 8, new ItemBuilder(Material.ARROW)
                     .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.next")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "further")
                     .build());
