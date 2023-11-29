@@ -1,5 +1,6 @@
 package de.joshua.uis;
 
+import com.destroystokyo.paper.ClientOption;
 import de.joshua.ShopPlugin;
 import de.joshua.uis.offers.SeeOfferedItemsGUI;
 import de.joshua.util.database.ShopDataBaseUtil;
@@ -7,7 +8,10 @@ import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
+import net.wesjd.anvilgui.AnvilGUI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -17,19 +21,34 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ShopGUI extends PageGUI {
     ShopPlugin shopPlugin;
     List<SellItemDataBase> db_items;
     ShopCategory currentCategory = ShopCategory.getFirst();
+    Pattern searchPattern;
     int categorySlot = 9 * 5 + 2;
 
-    public ShopGUI(ShopPlugin shopPlugin) {
+    public ShopGUI(ShopPlugin shopPlugin, Player player) {
         super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
         this.shopPlugin = shopPlugin;
+        this.player = player;
+        this.searchPattern = Pattern.compile("\\\\*");
+        updateItems();
+    }
+
+    public ShopGUI(ShopPlugin shopPlugin, Player player, Pattern searchPattern) {
+        super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
+        this.shopPlugin = shopPlugin;
+        this.searchPattern = searchPattern;
+        this.player = player;
         updateItems();
     }
 
@@ -77,8 +96,20 @@ public class ShopGUI extends PageGUI {
 
     @Override
     public List<ItemStack> getContent() {
+        System.out.println(player.getClientOption(ClientOption.LOCALE));
         return currentCategory.parseItems(db_items)
-                .stream().map(this::generateItem).toList();
+                .stream()
+                .filter(item ->
+                        checkRegex(item.item().getType().name().toLowerCase()) ||
+                        checkRegex(item.price().getType().name().toLowerCase()) ||
+                        isPlayer(item))
+                .map(this::generateItem).toList();
+    }
+
+    private boolean isPlayer(SellItemDataBase item) {
+        OfflinePlayer p = Bukkit.getOfflinePlayer(item.seller());
+        String name = p.getName();
+        return name != null && checkRegex(name.toLowerCase());
     }
 
     private ItemStack generateItem(SellItemDataBase sellItemDataBase) {
@@ -129,7 +160,37 @@ public class ShopGUI extends PageGUI {
                 StoredItemsGUI storedItemsGUI = new StoredItemsGUI(shopPlugin, player);
                 storedItemsGUI.open();
             }
+            case "search" ->{
+                if(clickType.isLeftClick()) {
+                    handleSearch();
+                } else if(clickType.isRightClick()) {
+                    player.closeInventory();
+                    new ShopGUI(shopPlugin, player).open();
+                }
+            }
         }
+    }
+
+    private void handleSearch() {
+        new AnvilGUI.Builder()
+                .onClose(stateSnapshot -> {
+                    String text = stateSnapshot.getText().toLowerCase();
+                    Pattern sp;
+                    if(text.contains("\\")) {
+                        sp = Pattern.compile(text);
+                    } else {
+                        sp = Pattern.compile("\\\\*" + text);
+                    }
+
+                    new ShopGUI(shopPlugin, player, sp).open();
+                })
+                .onClick((slot, stateSnapshot) -> { // Either use sync or async variant, not both
+                    return List.of(AnvilGUI.ResponseAction.close());
+                })
+                .text(ShopPlugin.getConfigString("shop.shop.gui.search.default_text"))
+                .title(ShopPlugin.getConfigString("shop.shop.gui.search.title"))
+                .plugin(shopPlugin)
+                .open(player);
     }
 
     @Override
@@ -156,5 +217,14 @@ public class ShopGUI extends PageGUI {
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "category")
                 .build());
     }
-}
 
+    private boolean checkRegex(String input) {
+        Matcher matcher = searchPattern.matcher(input);
+        return matcher.find();
+    }
+
+    public void open(){
+        setCachedContent(getContent());
+        player.openInventory(getInventory());
+    }
+}

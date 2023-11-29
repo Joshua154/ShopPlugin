@@ -61,7 +61,7 @@ public class BuyGUI implements IGUI {
     }
 
     private void handleCancel() {
-        new ShopGUI(shopPlugin).open(player);
+        new ShopGUI(shopPlugin, player).open();
     }
 
     private void handleAnnounce() {

@@ -67,6 +67,8 @@ shop.shop.gui.name: "Shop"
 shop.shop.gui.button.sell: "Sell"
 shop.shop.gui.button.offeredItems: "Trade Offers"
 shop.shop.gui.button.storedItems: "Stored Items"
+shop.shop.gui.search.title: "Search for an Item"
+shop.shop.gui.search.default_text: "funny text"
 
 
 shop.error.invalidArgs: "Invalid Arguments"

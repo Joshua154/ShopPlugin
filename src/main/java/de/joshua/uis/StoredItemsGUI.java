@@ -81,7 +81,7 @@ public class StoredItemsGUI extends PageGUI {
     }
 
     private void handleBack() {
-        new ShopGUI(shopPlugin).open(player);
+        new ShopGUI(shopPlugin, player).open();
     }
 
     @Override

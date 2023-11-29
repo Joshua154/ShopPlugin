@@ -25,11 +25,16 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven {
+        name = "codemc-snapshots"
+        url = "https://repo.codemc.io/repository/maven-snapshots/"
+    }
 }
 
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT"
     compileOnly "org.xerial:sqlite-jdbc:3.42.0.0"
+    implementation("net.wesjd:anvilgui:1.9.0-SNAPSHOT")
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
