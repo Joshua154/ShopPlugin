@@ -61,9 +61,9 @@ public class ShopGUI extends PageGUI {
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
                 .build());
         inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.COMPASS)
-                .displayName(Component.text("SEARCH"))
+                .displayName(Component.text("In Arbeit"))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
-                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
+                .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "search")
                 .build());
         return inventory;
     }
