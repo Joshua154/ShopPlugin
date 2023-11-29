@@ -92,7 +92,6 @@ public class ShopGUI extends PageGUI {
         ItemStack clickedItem = event.getCurrentItem();
         ClickType clickType = event.getClick();
         Player player = (Player) event.getWhoClicked();
-        int slot = event.getSlot();
 
         if (clickedItem == null) return;
         if (!clickedItem.hasItemMeta()) return;
