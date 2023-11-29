@@ -36,11 +36,7 @@ public final class ShopPlugin extends JavaPlugin {
     }
 
     public static DiscordWebhook getDiscordWebhook() {
-        return new DiscordWebhook("https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG");
-    }
-
-    public static ShopPlugin getInstance() {
-        return instance;
+        return new DiscordWebhook(ShopPlugin.getConfigString("discord.debugWebhook"));
     }
 
     public static FileConfiguration getFileConfig() {
