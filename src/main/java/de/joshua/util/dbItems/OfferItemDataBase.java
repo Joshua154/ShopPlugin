@@ -21,7 +21,7 @@ public record OfferItemDataBase(int dbID, UUID seller, UUID offeredBy, ItemStack
     public ItemStack getPreviewItem() {
         Component playerComponent;
         Player player = Bukkit.getServer().getOfflinePlayer(offeredBy()).getPlayer();
-        if(player == null) {
+        if (player == null) {
             playerComponent = Component.text(ShopPlugin.getConfigString("shop.error.unknown")).color(NamedTextColor.WHITE);
         } else {
             playerComponent = player.teamDisplayName();
@@ -29,10 +29,10 @@ public record OfferItemDataBase(int dbID, UUID seller, UUID offeredBy, ItemStack
 
         List<Component> lore = ShopPlugin.getConfigStringList("shop.item.offered.lore").stream()
                 .map(s -> MiniMessage.miniMessage().deserialize(s,
-                            Placeholder.component("price", Component.text(offer().getType().name())),
-                            Placeholder.parsed("price_trans_key", offer().getType().translationKey()),
-                            Placeholder.component("offered_by", playerComponent),
-                            Placeholder.component("time", Component.text(getFormattedDate()))
+                                Placeholder.component("price", Component.text(offer().getType().name())),
+                                Placeholder.parsed("price_trans_key", offer().getType().translationKey()),
+                                Placeholder.component("offered_by", playerComponent),
+                                Placeholder.component("time", Component.text(getFormattedDate()))
                         )
                 )
                 .toList();

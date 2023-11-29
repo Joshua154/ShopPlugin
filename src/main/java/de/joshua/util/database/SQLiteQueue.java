@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +14,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class SQLiteQueue {
     private static List<String> DATABASE_TABLES = null;
-    ShopPlugin shopPlugin;
     private final Queue<Pair<String, CompletableFuture<DataBaseCollection>>> operationQueue;
-    private Connection connection;
     private final boolean isProcessing = false;
+    ShopPlugin shopPlugin;
+    private Connection connection;
 
     public SQLiteQueue(ShopPlugin shopPlugin) {
         operationQueue = new LinkedList<>();
@@ -50,7 +49,7 @@ public class SQLiteQueue {
     private void processQueue() {
         while (!operationQueue.isEmpty()) {
             Pair<String, CompletableFuture<DataBaseCollection>> pair = operationQueue.poll();
-            if(pair == null) continue;
+            if (pair == null) continue;
             String operation = pair.left();
             System.out.println(operation);
             CompletableFuture<DataBaseCollection> future = pair.right();

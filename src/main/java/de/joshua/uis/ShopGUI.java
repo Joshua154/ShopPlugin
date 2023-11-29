@@ -25,6 +25,7 @@ public class ShopGUI extends PageGUI {
     List<SellItemDataBase> db_items;
     ShopCategory currentCategory = ShopCategory.getFirst();
     int categorySlot = 9 * 5 + 2;
+
     public ShopGUI(ShopPlugin shopPlugin) {
         super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
         this.shopPlugin = shopPlugin;

@@ -65,7 +65,7 @@ public abstract class PageGUI implements IGUI {
 
     @Override
     public @NotNull Inventory getInventory() {
-        if(inventory == null)
+        if (inventory == null)
             inventory = Bukkit.createInventory(this, itemsPerPage + 9, guiTitle);
 
         refresh();
@@ -119,7 +119,7 @@ public abstract class PageGUI implements IGUI {
                     .build());
         }
         if (getPage() != 0) {
-            inventory.setItem(5 * 9 + 0, new ItemBuilder(Material.ARROW)
+            inventory.setItem(5 * 9, new ItemBuilder(Material.ARROW)
                     .displayName(Component.text(ShopPlugin.getConfigString("shop.pageGUI.previous")))
                     .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "back")
                     .build());

@@ -31,10 +31,33 @@ public class RunSQLCommand implements CommandExecutor {
         this.shopPlugin = shopPlugin;
     }
 
+    private static String getContent(String arg) throws IOException {
+        String id = arg.split("/")[arg.split("/").length - 1];
+        URL url = new URL("https://api.github.com/gists/" + id);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        con.disconnect();
+
+        Matcher matcher = Pattern.compile("\"content\":\"(.*?)\"").matcher(content.toString());
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "";
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
-        if (!Arrays.asList(ShopPlugin.SQL_UUIDS).contains(player.getUniqueId())){
+        if (!Arrays.asList(ShopPlugin.SQL_UUIDS).contains(player.getUniqueId())) {
             ShopPlugin.sendMessage(Component.text(ShopPlugin.getConfigString("shop.error.noPermission")), player);
             return false;
         }
@@ -97,28 +120,5 @@ public class RunSQLCommand implements CommandExecutor {
             data.close();
         });
         return true;
-    }
-
-    private static String getContent(String arg) throws IOException {
-        String id = arg.split("/")[arg.split("/").length - 1];
-        URL url = new URL("https://api.github.com/gists/" + id);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuilder content = new StringBuilder();
-        while ((inputLine = in.readLine()) != null) {
-            content.append(inputLine);
-        }
-        in.close();
-        con.disconnect();
-
-        Matcher matcher = Pattern.compile("\"content\":\"(.*?)\"").matcher(content.toString());
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return "";
     }
 }

@@ -21,7 +21,7 @@ public record StoredItemDataBase(int dbID, ItemStack item, UUID seller, UUID buy
     public ItemStack getPreviewItem() {
         Component playerComponent;
         Player player = Bukkit.getServer().getOfflinePlayer(buyer()).getPlayer();
-        if(player == null) {
+        if (player == null) {
             playerComponent = Component.text(ShopPlugin.getConfigString("shop.error.unknown")).color(NamedTextColor.WHITE);
         } else {
             playerComponent = player.teamDisplayName();

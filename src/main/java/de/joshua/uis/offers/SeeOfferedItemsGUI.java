@@ -4,7 +4,6 @@ import de.joshua.ShopPlugin;
 import de.joshua.uis.ShopGUI;
 import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.OfferItemDataBase;
-import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
 import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;

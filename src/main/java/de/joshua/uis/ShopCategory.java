@@ -3,14 +3,11 @@ package de.joshua.uis;
 import de.joshua.ShopPlugin;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 public enum ShopCategory {
     BUY_MATERIAL(new ItemBuilder(Material.BRICKS)
@@ -18,7 +15,7 @@ public enum ShopCategory {
             .lore(ShopPlugin.getConfigStringParsed("shop.shop.categories.item.sell")).build(), (sellItem) -> sellItem.stream().sorted(
             (itemStack1, itemStack2) -> {
                 String material1 = itemStack1.item().getType().name();
-                String  material2 = itemStack2.item().getType().name();
+                String material2 = itemStack2.item().getType().name();
                 return material1.compareTo(material2);
             }
     ).toList()),
@@ -27,7 +24,7 @@ public enum ShopCategory {
             .lore(ShopPlugin.getConfigStringParsed("shop.shop.categories.item.price")).build(), (sellItem) -> sellItem.stream().sorted(
             (itemStack1, itemStack2) -> {
                 String material1 = itemStack1.price().getType().name();
-                String  material2 = itemStack2.price().getType().name();
+                String material2 = itemStack2.price().getType().name();
                 return material1.compareTo(material2);
             }
     ).toList()),
@@ -59,6 +56,10 @@ public enum ShopCategory {
         this.parseItems = parseItems;
     }
 
+    public static ShopCategory getFirst() {
+        return values()[0];
+    }
+
     public List<SellItemDataBase> parseItems(List<SellItemDataBase> itemStacks) {
         return parseItems.apply(itemStacks);
     }
@@ -69,10 +70,6 @@ public enum ShopCategory {
 
     ShopCategory previous() {
         return values()[(ordinal() - 1) % values().length];
-    }
-
-    public static ShopCategory getFirst() {
-        return values()[0];
     }
 
     public ItemStack displayItem() {

@@ -21,8 +21,8 @@ import java.util.UUID;
 
 public final class ShopPlugin extends JavaPlugin {
     public static UUID[] SQL_UUIDS;
-    private SQLiteQueue sqlQueue;
     private static ShopPlugin instance;
+    private SQLiteQueue sqlQueue;
 
     public static void sendMessage(Component component, Player... players) {
         Component msg = getPrefix().append(component);
@@ -33,42 +33,6 @@ public final class ShopPlugin extends JavaPlugin {
 
     public static Component getPrefix() {
         return MiniMessage.miniMessage().deserialize(ShopPlugin.getConfigString("shop.prefix")).append(Component.space());
-    }
-
-    @Override
-    public void onLoad() {
-        instance = this;
-        this.saveDefaultConfig();
-
-        SQL_UUIDS = getConfig().getStringList("shop.sql.uuids").stream().map(UUID::fromString).toArray(UUID[]::new);
-    }
-
-    @Override
-    public void onEnable() {
-        getDataFolder().mkdir();
-        this.sqlQueue = new SQLiteQueue(this);
-        registerEvents();
-        registerCommands();
-    }
-
-    private void registerEvents() {
-        PluginManager pluginManager = getServer().getPluginManager();
-
-        pluginManager.registerEvents(new GUIEH(), this);
-    }
-
-    private void registerCommands() {
-//        Objects.requireNonNull(getCommand("sell")).setExecutor(new SellCommand(this));
-        Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
-//        Objects.requireNonNull(getCommand("stored")).setExecutor(new StoredCommand(this));
-        Objects.requireNonNull(getCommand("open")).setExecutor(new OppenBuyCommand(this));
-        Objects.requireNonNull(getCommand("announce")).setExecutor(new AnnounceCommand(this));
-        Objects.requireNonNull(getCommand("executeSQL")).setExecutor(new RunSQLCommand(this));
-//        Objects.requireNonNull(getCommand("offers")).setExecutor(new SeeOffersCommand(this));
-    }
-
-    public SQLiteQueue getSQLQueue() {
-        return sqlQueue;
     }
 
     public static DiscordWebhook getDiscordWebhook() {
@@ -95,5 +59,38 @@ public final class ShopPlugin extends JavaPlugin {
 
     public static List<String> getConfigStringList(String key) {
         return getFileConfig().getString(key) == null ? List.of("Err") : Objects.requireNonNull(getFileConfig().getStringList(key));
+    }
+
+    @Override
+    public void onLoad() {
+        instance = this;
+        this.saveDefaultConfig();
+
+        SQL_UUIDS = getConfig().getStringList("shop.sql.uuids").stream().map(UUID::fromString).toArray(UUID[]::new);
+    }
+
+    @Override
+    public void onEnable() {
+        getDataFolder().mkdir();
+        this.sqlQueue = new SQLiteQueue(this);
+        registerEvents();
+        registerCommands();
+    }
+
+    private void registerEvents() {
+        PluginManager pluginManager = getServer().getPluginManager();
+
+        pluginManager.registerEvents(new GUIEH(), this);
+    }
+
+    private void registerCommands() {
+        Objects.requireNonNull(getCommand("shop")).setExecutor(new ShopCommand(this));
+        Objects.requireNonNull(getCommand("open")).setExecutor(new OppenBuyCommand(this));
+        Objects.requireNonNull(getCommand("announce")).setExecutor(new AnnounceCommand(this));
+        Objects.requireNonNull(getCommand("executeSQL")).setExecutor(new RunSQLCommand(this));
+    }
+
+    public SQLiteQueue getSQLQueue() {
+        return sqlQueue;
     }
 }

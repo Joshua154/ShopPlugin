@@ -36,7 +36,7 @@ public class QuantiySelection extends PageGUI {
     @Override
     public List<ItemStack> getContent() {
         List<Integer> quantities = new ArrayList<>();
-        for (int i = 1; i <= 64*4; i++) {
+        for (int i = 1; i <= 64 * 4; i++) {
             quantities.add(i);
         }
 

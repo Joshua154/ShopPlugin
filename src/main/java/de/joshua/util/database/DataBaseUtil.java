@@ -3,8 +3,9 @@ package de.joshua.util.database;
 import de.joshua.ShopPlugin;
 import org.bukkit.Bukkit;
 
-import javax.annotation.Nullable;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -76,7 +77,7 @@ public class DataBaseUtil {
             PreparedStatement ps = null;
             ResultSet rs = null;
 
-            try{
+            try {
                 ps = connection.prepareStatement(query);
                 if (query.toLowerCase().startsWith("select")) {
                     rs = ps.executeQuery();

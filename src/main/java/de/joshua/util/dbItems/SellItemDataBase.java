@@ -1,7 +1,6 @@
 package de.joshua.util.dbItems;
 
 import de.joshua.ShopPlugin;
-import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -13,7 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -24,7 +22,7 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
     public ItemStack getPreviewItem(NamespacedKey key) {
         Component playerComponent;
         Player player = Bukkit.getServer().getOfflinePlayer(seller()).getPlayer();
-        if(player == null) {
+        if (player == null) {
             playerComponent = Component.text(ShopPlugin.getConfigString("shop.error.unknown")).color(NamedTextColor.WHITE);
         } else {
             playerComponent = player.teamDisplayName();

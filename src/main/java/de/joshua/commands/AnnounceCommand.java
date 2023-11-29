@@ -18,6 +18,16 @@ public class AnnounceCommand implements CommandExecutor {
         this.shopPlugin = shopPlugin;
     }
 
+    public static void sendAnnouncement(String itemID, Component playerName) {
+        ShopPlugin.sendMessage(
+                MiniMessage.miniMessage().deserialize(
+                        ShopPlugin.getConfigString("shop.command.announce"),
+                        Placeholder.component("player_name", playerName),
+                        Placeholder.parsed("item_id", itemID)
+                ),
+                Bukkit.getOnlinePlayers().toArray(new Player[0]));
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (!(sender instanceof Player player)) return false;
@@ -28,15 +38,5 @@ public class AnnounceCommand implements CommandExecutor {
         sendAnnouncement(args[0], player.displayName());
 
         return true;
-    }
-
-    public static void sendAnnouncement(String itemID, Component playerName) {
-        ShopPlugin.sendMessage(
-                MiniMessage.miniMessage().deserialize(
-                        ShopPlugin.getConfigString("shop.command.announce"),
-                        Placeholder.component("player_name", playerName),
-                        Placeholder.parsed("item_id", itemID)
-                ),
-                Bukkit.getOnlinePlayers().toArray(new Player[0]));
     }
 }
