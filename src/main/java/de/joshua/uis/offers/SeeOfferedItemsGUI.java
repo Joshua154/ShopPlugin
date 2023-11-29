@@ -37,10 +37,6 @@ public class SeeOfferedItemsGUI extends PageGUI {
 
     }
 
-    public void open() {
-        super.open(player);
-    }
-
     @Override
     public List<ItemStack> getContent() {
         return db_items.stream().map(this::generateItem).toList();

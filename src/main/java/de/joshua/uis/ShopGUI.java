@@ -9,6 +9,7 @@ import de.joshua.util.ui.PageGUI;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
@@ -89,6 +90,7 @@ public class ShopGUI extends PageGUI {
     @Override
     public void onItemClick(InventoryClickEvent event) {
         ItemStack clickedItem = event.getCurrentItem();
+        ClickType clickType = event.getClick();
         Player player = (Player) event.getWhoClicked();
         int slot = event.getSlot();
 
@@ -107,7 +109,12 @@ public class ShopGUI extends PageGUI {
                 buyGUI.open();
             }
             case "category" -> {
-                setNextCategory();
+                ShopCategory newCategory;
+                if(clickType.isLeftClick()) newCategory = currentCategory.next();
+                else if(clickType.isRightClick()) newCategory = currentCategory.previous();
+                else return;
+
+                setNextCategory(newCategory);
                 updateCachedContent();
                 refresh();
             }
@@ -143,10 +150,9 @@ public class ShopGUI extends PageGUI {
         db_items = future.join();
     }
 
-    private void setNextCategory() {
-        ShopCategory next = currentCategory.next();
-        currentCategory = next;
-        inventory.setItem(categorySlot, new ItemBuilder(next.displayItem())
+    private void setNextCategory(ShopCategory newCategory) {
+        currentCategory = newCategory;
+        inventory.setItem(categorySlot, new ItemBuilder(newCategory.displayItem())
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "category")
                 .build());

@@ -1,6 +1,7 @@
 package de.joshua.util.dbItems;
 
 import de.joshua.ShopPlugin;
+import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.item.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -69,7 +70,6 @@ public record SellItemDataBase(int dbID, ItemStack item, ItemStack price, UUID s
     }
 
     public boolean isNotAvailable(ShopPlugin shopPlugin) {
-//        return !ShopDataBaseUtil.isStillAvailable(shopPlugin, dbID);
-        return false;
+         return !ShopDataBaseUtil.isStillAvailable(shopPlugin, dbID);
     }
 }

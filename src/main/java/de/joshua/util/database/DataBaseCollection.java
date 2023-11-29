@@ -1,5 +1,8 @@
 package de.joshua.util.database;
 
+import de.joshua.ShopPlugin;
+import net.kyori.adventure.text.Component;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +18,7 @@ public record DataBaseCollection(Connection connection, PreparedStatement prepar
         try {
             if (connection != null) connection.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            ShopPlugin.sendMessageToAdmin(ShopPlugin.getPrefix().append(Component.text("Error while closing connection: " + e.getMessage())));
         }
     }
 
@@ -23,7 +26,7 @@ public record DataBaseCollection(Connection connection, PreparedStatement prepar
         try {
             if (preparedStatement != null) preparedStatement.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            ShopPlugin.sendMessageToAdmin(ShopPlugin.getPrefix().append(Component.text("Error while closing connection: " + e.getMessage())));
         }
     }
 
@@ -31,7 +34,7 @@ public record DataBaseCollection(Connection connection, PreparedStatement prepar
         try {
             if (resultSet != null) resultSet.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            ShopPlugin.sendMessageToAdmin(ShopPlugin.getPrefix().append(Component.text("Error while closing connection: " + e.getMessage())));
         }
     }
 }

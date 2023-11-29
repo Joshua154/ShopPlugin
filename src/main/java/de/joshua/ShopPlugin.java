@@ -9,6 +9,7 @@ import de.joshua.util.database.SQLiteQueue;
 import de.joshua.util.ui.GUIEH;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -27,6 +28,13 @@ public final class ShopPlugin extends JavaPlugin {
     public static void sendMessage(Component component, Player... players) {
         Component msg = getPrefix().append(component);
         for (Player player : players) {
+            player.sendMessage(msg);
+        }
+    }
+
+    public static void sendMessageToAdmin(Component component) {
+        Component msg = getPrefix().append(component);
+        for (Player player : Bukkit.getOnlinePlayers().stream().filter(player -> player.hasPermission("shop.admin")).toList()) {
             player.sendMessage(msg);
         }
     }

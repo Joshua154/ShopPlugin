@@ -69,7 +69,9 @@ public enum ShopCategory {
     }
 
     ShopCategory previous() {
-        return values()[(ordinal() - 1) % values().length];
+        ShopCategory[] categories = values();
+        int length = categories.length;
+        return categories[(ordinal() + length - 1) % length];
     }
 
     public ItemStack displayItem() {

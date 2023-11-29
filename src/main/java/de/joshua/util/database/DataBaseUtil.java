@@ -1,6 +1,7 @@
 package de.joshua.util.database;
 
 import de.joshua.ShopPlugin;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;
@@ -87,7 +88,8 @@ public class DataBaseUtil {
             } catch (Exception e) {
                 ShopPlugin.getDiscordWebhook().sendError(Map.of("Query", query, "Message", e.getMessage()));
                 Bukkit.getLogger().warning("Error while executing query: " + query + "\n" + Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).reduce("", (s1, s2) -> s1 + s2 + "\n"));
-                e.printStackTrace();
+
+                ShopPlugin.sendMessageToAdmin(ShopPlugin.getPrefix().append(Component.text("Error: " + e.getMessage())));
             }
             return new DataBaseCollection(connection, ps, rs);
         });
