@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ShopGUI extends PageGUI {
+    private
     ShopPlugin shopPlugin;
     List<SellItemDataBase> db_items;
     ShopCategory currentCategory = ShopCategory.getFirst();
@@ -184,9 +185,7 @@ public class ShopGUI extends PageGUI {
 
                     new ShopGUI(shopPlugin, player, sp).open();
                 })
-                .onClick((slot, stateSnapshot) -> { // Either use sync or async variant, not both
-                    return List.of(AnvilGUI.ResponseAction.close());
-                })
+                .onClick((slot, stateSnapshot) -> List.of(AnvilGUI.ResponseAction.close()))
                 .text(ShopPlugin.getConfigString("shop.shop.gui.search.default_text"))
                 .title(ShopPlugin.getConfigString("shop.shop.gui.search.title"))
                 .plugin(shopPlugin)
