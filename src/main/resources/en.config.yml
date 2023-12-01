@@ -1,0 +1,143 @@
+shop.sql.uuids:
+  - "596b9acc-d337-4bed-a7a5-7c407d2938cf"
+shop.prefix: "<gray>[<bold><gradient:#ff930f:#fff95b>Shop</gradient></bold>]</gray><white>"
+discord.debugWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
+discord.shopWebhook: "https://discord.com/api/webhooks/1175339451157843978/xi7bUSgGW8GbjpRckep3SaObq-Cu-ob4l-u6BgG9WfTh7GcFSy68ObimnXwvqliliZDG"
+
+shop.command.announce: "<click:run_command:/open <item_id>>Click here to check this item out of <player_name>"
+
+shop.languages:
+  - "de_de"
+
+shop.makeOffer.success: "Offer send"
+shop.makeOffer.accept: "Offer accepted"
+shop.makeOffer.invalid: "Not a valid Offer"
+shop.makeOffer.gui.name: "Make Offer"
+shop.makeOffer.gui.display.buyItem: "Item to Buy"
+shop.makeOffer.gui.display.offeredItem: "Offered Price"
+shop.makeOffer.gui.button.confirm: "Confirm Offer"
+shop.makeOffer.gui.button.cancel: "Cancel"
+
+
+shop.offers.deny: "Offer Removed"
+shop.offers.accept: "Item sold"
+shop.offers.gui.name: "Offer"
+shop.offers.gui.display.buyItem: "Item to Buy"
+shop.offers.gui.display.offeredItem: "Offered Price"
+shop.offers.gui.button.confirm: "Accept Offer"
+shop.offers.gui.button.cancel: "Cancel"
+shop.offers.gui.button.deny: "Denny Offer"
+
+
+shop.offeredItems.gui.name: "Offers"
+shop.offeredItems.gui.button.back: "Go Back"
+
+
+shop.storedItems.gui.name: "Stored Items"
+shop.storedItems.gui.button.back: "Go Back"
+
+
+shop.selection.item.gui.display.buyItem: "Select Item"
+
+
+shop.selection.quantity.gui.display.buyItem: "Select Quantity"
+
+
+shop.buy.success: "Item bought"
+shop.buy.notAffordable: "You can't afford this item"
+shop.buy.removed: "Item Removed"
+shop.buy.gui.name: "Buy"
+shop.buy.gui.display.buyItem: "Item to Buy"
+shop.buy.gui.display.price: "Price"
+shop.buy.gui.button.confirm: "Confirm Purchase"
+shop.buy.gui.button.sendOffer: "Send Price Offer"
+shop.buy.gui.button.cancel: "Cancel"
+shop.buy.gui.button.remove: "Remove"
+shop.buy.gui.button.announce: "Announce"
+
+
+shop.sell.gui.name: "Sell"
+shop.sell.gui.display.sellItem: "Item to Sell"
+shop.sell.gui.display.customPrice: "Custom Price"
+shop.sell.gui.display.customPriceSelection: "Select Price"
+shop.sell.gui.button.confirm: "Confirm Purchase"
+shop.sell.gui.button.sendOffer: "Send Price Offer"
+shop.sell.gui.button.cancel: "Cancel"
+
+
+shop.shop.gui.name: "Shop"
+shop.shop.gui.button.sell: "Sell"
+shop.shop.gui.button.offeredItems: "Trade Offers"
+shop.shop.gui.button.storedItems: "Stored Items"
+shop.shop.gui.button.search: "Search"
+shop.shop.gui.search.title: "Search for an Item"
+shop.shop.gui.search.default_text: ""
+
+
+shop.error.invalidArgs: "Invalid Arguments"
+shop.error.itemUnavailable: "This item is not available"
+shop.error.itemSold: "This item is already sold"
+shop.error.noPermission: "You are not allowed to use this command"
+shop.error.noSellItem: "No item to sell"
+shop.error.noPriceItem: "No item for Price"
+shop.error.unknown: "Unknown"
+
+
+shop.item.offered.lore:
+  - "<gray>Price:</gray> <aqua><lang:<price_trans_key>></aqua>"
+  - "<gray>Offered by:</gray> <offered_by>"
+  - "<gray>Offered at:</gray> <aqua><time></aqua>"
+
+
+shop.item.sellItem.lore:
+  - "<gray>Seller:</gray> <seller>"
+  - "<gray>Price:</gray> <aqua><lang:<price_trans_key>></aqua>"
+  - "<gray>Created at:</gray> <aqua><time></aqua>"
+
+
+shop.item.storedItems.lore:
+  - "<gray>Buyer:</gray> <bought_by>"
+  - "<gray>Bought at:</gray> <aqua><time></aqua>"
+
+
+shop.pageGUI.previous: "Previous Page"
+shop.pageGUI.next: "Next Page"
+
+shop.sql.createTables:
+  - 'CREATE TABLE IF NOT EXISTS "sellItems"
+       (
+           id          integer     not null
+               constraint sellItems_pk
+                   primary key autoincrement,
+           seller_uuid VARCHAR(40) not null,
+           createdOn   DATETIME default CURRENT_TIMESTAMP,
+           boughtAt    TIMESTAMP,
+           item        text        not null,
+           price       text,
+           bought      BOOLEAN  default FALSE,
+           buyer_uuid  VARCHAR(40)
+       )'
+  - 'CREATE TABLE IF NOT EXISTS "itemOffers"
+       (
+           id          integer                            not null
+               constraint storedItems_pk
+                   primary key autoincrement,
+           to_uuid     VARCHAR(40)                        not null,
+           from_uuid   VARCHAR(40)                        not null,
+           timestamp   DATETIME default CURRENT_TIMESTAMP not null,
+           offeredItem text                               not null,
+           buyItemID   integer
+       )'
+  - 'CREATE TABLE IF NOT EXISTS "storedItems"
+       (
+           id         integer                            not null
+               constraint storedItems_pk
+                   primary key autoincrement,
+           to_uuid    VARCHAR(40)                        not null,
+           from_uuid  VARCHAR(40)                        not null,
+           timestamp  DATETIME default CURRENT_TIMESTAMP not null,
+           item       text                               not null,
+           soldItemID integer
+               constraint storedItems_sell_items_id_fk
+                   references sell_items
+       )'

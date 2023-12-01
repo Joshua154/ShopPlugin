@@ -5,11 +5,13 @@ import de.joshua.commands.OppenBuyCommand;
 import de.joshua.commands.RunSQLCommand;
 import de.joshua.commands.ShopCommand;
 import de.joshua.util.DiscordWebhook;
+import de.joshua.util.LanguageUTILS;
 import de.joshua.util.database.SQLiteQueue;
 import de.joshua.util.ui.GUIEH;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -23,6 +25,7 @@ import java.util.UUID;
 public final class ShopPlugin extends JavaPlugin {
     public static UUID[] SQL_UUIDS;
     private static ShopPlugin instance;
+    private static LanguageUTILS languageUTILS;
     private SQLiteQueue sqlQueue;
 
     public static void sendMessage(Component component, Player... players) {
@@ -71,6 +74,7 @@ public final class ShopPlugin extends JavaPlugin {
         this.saveDefaultConfig();
 
         SQL_UUIDS = getConfig().getStringList("shop.sql.uuids").stream().map(UUID::fromString).toArray(UUID[]::new);
+        this.languageUTILS = new LanguageUTILS(this);
     }
 
     @Override
@@ -96,5 +100,19 @@ public final class ShopPlugin extends JavaPlugin {
 
     public SQLiteQueue getSQLQueue() {
         return sqlQueue;
+    }
+
+    public static LanguageUTILS getLanguageUTILS() {
+        return languageUTILS;
+    }
+
+    public static String getTranslatedItemName(Material mat, String playerLanguageKey) {
+        String translatedItem = mat.name().toLowerCase();
+
+        if(!Objects.equals(playerLanguageKey, "en_us")){
+            LanguageUTILS languageUTILS = ShopPlugin.getLanguageUTILS();
+            translatedItem = languageUTILS.getLanguageString(playerLanguageKey, mat.translationKey());
+        }
+        return translatedItem;
     }
 }

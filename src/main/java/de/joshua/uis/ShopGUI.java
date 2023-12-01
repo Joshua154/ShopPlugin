@@ -3,6 +3,7 @@ package de.joshua.uis;
 import com.destroystokyo.paper.ClientOption;
 import de.joshua.ShopPlugin;
 import de.joshua.uis.offers.SeeOfferedItemsGUI;
+import de.joshua.util.LanguageUTILS;
 import de.joshua.util.database.ShopDataBaseUtil;
 import de.joshua.util.dbItems.SellItemDataBase;
 import de.joshua.util.item.ItemBuilder;
@@ -36,11 +37,13 @@ public class ShopGUI extends PageGUI {
     ShopCategory currentCategory = ShopCategory.getFirst();
     Pattern searchPattern;
     int categorySlot = 9 * 5 + 2;
+    String playerLanguageKey;
 
     public ShopGUI(ShopPlugin shopPlugin, Player player) {
         super(Component.text(ShopPlugin.getConfigString("shop.shop.gui.name")));
         this.shopPlugin = shopPlugin;
         this.player = player;
+        this.playerLanguageKey = player.getClientOption(ClientOption.LOCALE);
         this.searchPattern = Pattern.compile("\\\\*");
         updateItems();
     }
@@ -50,6 +53,7 @@ public class ShopGUI extends PageGUI {
         this.shopPlugin = shopPlugin;
         this.searchPattern = searchPattern;
         this.player = player;
+        this.playerLanguageKey = player.getClientOption(ClientOption.LOCALE);
         updateItems();
     }
 
@@ -62,6 +66,7 @@ public class ShopGUI extends PageGUI {
         String sell = ShopPlugin.getConfigString("shop.shop.gui.button.sell");
         String offeredItems = ShopPlugin.getConfigString("shop.shop.gui.button.offeredItems");
         String storedItems = ShopPlugin.getConfigString("shop.shop.gui.button.storedItems");
+        String search = ShopPlugin.getConfigString("shop.shop.gui.button.search");
 
         inventory.setItem(categorySlot, new ItemBuilder(currentCategory.displayItem())
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
@@ -83,7 +88,7 @@ public class ShopGUI extends PageGUI {
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "stored_items")
                 .build());
         inventory.setItem(9 * 5 + 6, new ItemBuilder(Material.COMPASS)
-                .displayName(Component.text("In Arbeit"))
+                .displayName(Component.text(search))
                 .persistentData(getPageGUIKey("shop_gui"), PersistentDataType.STRING, "button")
                 .persistentData(getPageGUIKey("type"), PersistentDataType.STRING, "search")
                 .build());
@@ -97,12 +102,11 @@ public class ShopGUI extends PageGUI {
 
     @Override
     public List<ItemStack> getContent() {
-        System.out.println(player.getClientOption(ClientOption.LOCALE));
-        return currentCategory.parseItems(db_items)
+        return currentCategory.parseItems(db_items, playerLanguageKey)
                 .stream()
                 .filter(item ->
-                        checkRegex(item.item().getType().name().toLowerCase()) ||
-                        checkRegex(item.price().getType().name().toLowerCase()) ||
+                        checkRegex(getTranslatedItemName(item.item().getType())) ||
+                        checkRegex(getTranslatedItemName(item.price().getType())) ||
                         isPlayer(item))
                 .map(this::generateItem).toList();
     }
@@ -165,8 +169,7 @@ public class ShopGUI extends PageGUI {
                 if(clickType.isLeftClick()) {
                     handleSearch();
                 } else if(clickType.isRightClick()) {
-                    player.closeInventory();
-                    new ShopGUI(shopPlugin, player).open();
+                    new ShopGUI(shopPlugin, player, Pattern.compile("\\\\*")).open();
                 }
             }
         }
@@ -225,5 +228,15 @@ public class ShopGUI extends PageGUI {
     public void open(){
         setCachedContent(getContent());
         player.openInventory(getInventory());
+    }
+
+    private String getTranslatedItemName(Material mat) {
+        String translatedItem = mat.name().toLowerCase();
+
+        if(!Objects.equals(playerLanguageKey, "en_us")){
+            LanguageUTILS languageUTILS = shopPlugin.getLanguageUTILS();
+            translatedItem = languageUTILS.getLanguageString(playerLanguageKey, mat.translationKey());
+        }
+        return translatedItem;
     }
 }
