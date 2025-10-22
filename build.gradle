@@ -61,10 +61,10 @@ processResources {
 
 tasks {
     runServer {
-        downloadPlugins {
-            github("ViaVersion", "ViaVersion", "4.8.1", "ViaVersion-4.8.1.jar")
-            github("ViaVersion", "ViaBackwards", "4.8.1", "ViaBackwards-4.8.1.jar")
-        }
+//        downloadPlugins {
+//            github("ViaVersion", "ViaVersion", "4.8.1", "ViaVersion-4.8.1.jar")
+//            github("ViaVersion", "ViaBackwards", "4.8.1", "ViaBackwards-4.8.1.jar")
+//        }
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
